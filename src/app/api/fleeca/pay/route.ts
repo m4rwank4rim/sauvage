@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
     // Load the design request
     const designRequest = await dbStore.getRequestById(requestId);
     if (!designRequest) {
+      console.warn(`[fleeca/pay] requestId not found: ${requestId}`);
       return NextResponse.json({ success: false, error: "Design request not found." }, { status: 404 });
     }
 
