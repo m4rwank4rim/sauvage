@@ -9,7 +9,8 @@ const mask = (t?: string) => (t ? `${t.slice(0, 6)}...${t.slice(-4)}` : undefine
 export async function GET() {
   const env = kvEnv();
   const out: Record<string, unknown> = {
-    b2: await blobProbe(),
+    storageDriver: "vercel-blob",
+    blob: await blobProbe(true),
     envCandidates: {
       UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
       KV_REST_API_URL: process.env.KV_REST_API_URL,
