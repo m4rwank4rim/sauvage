@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
           { name: "Routing", value: payer_routing || "N/A", inline: true },
           { name: "Request", value: `#${request.id}`, inline: true },
         ],
-        footer: "Fleeca Bank — Vortex Creative",
+        footer: "Fleeca Bank — SAUVAGE",
       });
     }
 
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
           { name: "Payer", value: payer_name || "Unknown", inline: true },
           { name: "Routing", value: payer_routing || "N/A", inline: true },
         ],
-        footer: "Fleeca Bank — Vortex Creative",
+        footer: "Fleeca Bank — SAUVAGE",
       });
     }
 

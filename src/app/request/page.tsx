@@ -115,7 +115,7 @@ function RequestPageInner() {
   if (status === "loading" || status === "unauthenticated") {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 rounded-full border-4 border-[#6A0DAD]/30 border-t-[#CCFF00] animate-spin" />
+        <div className="w-10 h-10 rounded-full border-4 border-white/[0.08] border-t-[#CCFF00] animate-spin" />
       </div>
     );
   }
@@ -161,13 +161,13 @@ function RequestPageInner() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#160B36] border border-[#6A0DAD]/30 text-xs font-mono text-[#CCFF00] uppercase tracking-widest mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#141417] border border-white/[0.08] text-xs font-mono text-[#CCFF00] uppercase tracking-widest mb-4">
             Commission Portal
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight text-[#F5F3FA] mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight text-[#F4F4F0] mb-4">
             Start your design brief.
           </h1>
-          <p className="text-sm text-[#B8AFD1] leading-relaxed max-w-lg mx-auto">
+          <p className="text-sm text-[#A8A8AF] leading-relaxed max-w-lg mx-auto">
             Fill out the form below. Once we review your brief, we will issue a quote within 12
             hours and create a Fleeca Bank payment link for you.
           </p>
@@ -181,7 +181,7 @@ function RequestPageInner() {
           className="space-y-6"
         >
           {/* Identity fields */}
-          <div className="rounded-2xl bg-[#160B36] border border-[#6A0DAD]/30 p-6 space-y-5">
+          <div className="rounded-2xl bg-[#141417] border border-white/[0.08] p-6 space-y-5">
             <h2 className="text-sm font-mono font-bold text-[#CCFF00] uppercase tracking-wider flex items-center gap-2">
               <span className="w-5 h-5 rounded-full border border-[#CCFF00]/40 flex items-center justify-center text-[10px]">1</span>
               Client Identity
@@ -189,13 +189,13 @@ function RequestPageInner() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-mono text-[#B8AFD1] mb-1.5 block uppercase tracking-wider">
+                <label className="text-xs font-mono text-[#A8A8AF] mb-1.5 block uppercase tracking-wider">
                   In-Character Full Name *
                 </label>
                 <input
                   {...register("clientName")}
                   placeholder="Jane Citizen"
-                  className="w-full bg-[#0F0529] border border-[#6A0DAD]/40 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F5F3FA] placeholder-[#7A7099] outline-none transition-colors"
+                  className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] placeholder-[#6B6B72] outline-none transition-colors"
                 />
                 {errors.clientName && (
                   <p className="text-xs text-red-400 mt-1">{errors.clientName.message}</p>
@@ -203,13 +203,13 @@ function RequestPageInner() {
               </div>
 
               <div>
-                <label className="text-xs font-mono text-[#B8AFD1] mb-1.5 block uppercase tracking-wider">
+                <label className="text-xs font-mono text-[#A8A8AF] mb-1.5 block uppercase tracking-wider">
                   Discord Handle *
                 </label>
                 <input
                   {...register("discordTag")}
                   placeholder="username#0000"
-                  className="w-full bg-[#0F0529] border border-[#6A0DAD]/40 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F5F3FA] placeholder-[#7A7099] outline-none transition-colors"
+                  className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] placeholder-[#6B6B72] outline-none transition-colors"
                 />
                 {errors.discordTag && (
                   <p className="text-xs text-red-400 mt-1">{errors.discordTag.message}</p>
@@ -218,32 +218,32 @@ function RequestPageInner() {
             </div>
 
             <div>
-              <label className="text-xs font-mono text-[#B8AFD1] mb-1.5 block uppercase tracking-wider">
+              <label className="text-xs font-mono text-[#A8A8AF] mb-1.5 block uppercase tracking-wider">
                 In-Character Business Name{" "}
-                <span className="text-[#7A7099] lowercase">(optional)</span>
+                <span className="text-[#6B6B72] lowercase">(optional)</span>
               </label>
               <input
                 {...register("businessName")}
                 placeholder="e.g. Carlucci's Ristorante, Lust & Luxe Nightclub"
-                className="w-full bg-[#0F0529] border border-[#6A0DAD]/40 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F5F3FA] placeholder-[#7A7099] outline-none transition-colors"
+                className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] placeholder-[#6B6B72] outline-none transition-colors"
               />
             </div>
           </div>
 
           {/* Project Specifics */}
-          <div className="rounded-2xl bg-[#160B36] border border-[#6A0DAD]/30 p-6 space-y-5">
+          <div className="rounded-2xl bg-[#141417] border border-white/[0.08] p-6 space-y-5">
             <h2 className="text-sm font-mono font-bold text-[#CCFF00] uppercase tracking-wider flex items-center gap-2">
               <span className="w-5 h-5 rounded-full border border-[#CCFF00]/40 flex items-center justify-center text-[10px]">2</span>
               Project Details
             </h2>
 
             <div>
-              <label className="text-xs font-mono text-[#B8AFD1] mb-1.5 block uppercase tracking-wider">
+              <label className="text-xs font-mono text-[#A8A8AF] mb-1.5 block uppercase tracking-wider">
                 Project Type *
               </label>
               <select
                 {...register("projectType")}
-                className="w-full bg-[#0F0529] border border-[#6A0DAD]/40 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F5F3FA] outline-none transition-colors appearance-none"
+                className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] outline-none transition-colors appearance-none"
               >
                 {PROJECT_TYPES.map((pt) => (
                   <option key={pt} value={pt}>
@@ -257,7 +257,7 @@ function RequestPageInner() {
             </div>
 
             <div>
-              <label className="text-xs font-mono text-[#B8AFD1] mb-2.5 block uppercase tracking-wider">
+              <label className="text-xs font-mono text-[#A8A8AF] mb-2.5 block uppercase tracking-wider">
                 Delivery Urgency *
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -268,8 +268,8 @@ function RequestPageInner() {
                       key={opt.value}
                       className={`cursor-pointer rounded-xl p-4 border transition-all ${
                         isSelected
-                          ? "bg-[#1B0F3D] border-[#CCFF00] shadow-glow-lime"
-                          : "bg-[#0F0529] border-[#6A0DAD]/30 hover:border-[#6A0DAD]"
+                          ? "bg-[#1B1B20] border-[#CCFF00] shadow-glow-lime"
+                          : "bg-[#0B0B0D] border-white/[0.08] hover:border-white/30"
                       }`}
                     >
                       <input
@@ -278,8 +278,8 @@ function RequestPageInner() {
                         value={opt.value}
                         className="sr-only"
                       />
-                      <div className="text-xs font-bold text-[#F5F3FA]">{opt.label}</div>
-                      <div className="text-[10px] text-[#B8AFD1] mt-0.5">{opt.description}</div>
+                      <div className="text-xs font-bold text-[#F4F4F0]">{opt.label}</div>
+                      <div className="text-[10px] text-[#A8A8AF] mt-0.5">{opt.description}</div>
                     </label>
                   );
                 })}
@@ -287,12 +287,12 @@ function RequestPageInner() {
             </div>
 
             <div>
-              <label className="text-xs font-mono text-[#B8AFD1] mb-1.5 block uppercase tracking-wider">
+              <label className="text-xs font-mono text-[#A8A8AF] mb-1.5 block uppercase tracking-wider">
                 Budget Range *
               </label>
               <select
                 {...register("budgetRange")}
-                className="w-full bg-[#0F0529] border border-[#6A0DAD]/40 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F5F3FA] outline-none transition-colors appearance-none"
+                className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] outline-none transition-colors appearance-none"
               >
                 {BUDGET_RANGES.map((b) => (
                   <option key={b} value={b}>
@@ -304,21 +304,21 @@ function RequestPageInner() {
           </div>
 
           {/* Creative Brief */}
-          <div className="rounded-2xl bg-[#160B36] border border-[#6A0DAD]/30 p-6 space-y-4">
+          <div className="rounded-2xl bg-[#141417] border border-white/[0.08] p-6 space-y-4">
             <h2 className="text-sm font-mono font-bold text-[#CCFF00] uppercase tracking-wider flex items-center gap-2">
               <span className="w-5 h-5 rounded-full border border-[#CCFF00]/40 flex items-center justify-center text-[10px]">3</span>
               Creative Brief
             </h2>
 
             <div>
-              <label className="text-xs font-mono text-[#B8AFD1] mb-1.5 block uppercase tracking-wider">
+              <label className="text-xs font-mono text-[#A8A8AF] mb-1.5 block uppercase tracking-wider">
                 Describe Your Vision *
               </label>
               <textarea
                 {...register("brief")}
                 rows={7}
                 placeholder="Tell us about your business concept, faction lore, target aesthetic, color preferences, competitor references, and deliverable specs. The more detail you provide, the faster we can quote and begin work."
-                className="w-full bg-[#0F0529] border border-[#6A0DAD]/40 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F5F3FA] placeholder-[#7A7099] outline-none transition-colors resize-none leading-relaxed"
+                className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] placeholder-[#6B6B72] outline-none transition-colors resize-none leading-relaxed"
               />
               <div className="flex items-center justify-between mt-1">
                 {errors.brief ? (
@@ -326,7 +326,7 @@ function RequestPageInner() {
                 ) : (
                   <span />
                 )}
-                <span className="text-[11px] font-mono text-[#7A7099]">
+                <span className="text-[11px] font-mono text-[#6B6B72]">
                   {briefValue.length}/2500
                 </span>
               </div>
@@ -334,19 +334,19 @@ function RequestPageInner() {
 
             {/* Reference File Upload */}
             <div>
-              <label className="text-xs font-mono text-[#B8AFD1] mb-1.5 block uppercase tracking-wider">
+              <label className="text-xs font-mono text-[#A8A8AF] mb-1.5 block uppercase tracking-wider">
                 Reference Images{" "}
-                <span className="text-[#7A7099] lowercase">(optional, up to 5 files)</span>
+                <span className="text-[#6B6B72] lowercase">(optional, up to 5 files)</span>
               </label>
 
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full rounded-xl border-2 border-dashed border-[#6A0DAD]/40 hover:border-[#CCFF00]/50 py-6 flex flex-col items-center gap-2 text-xs text-[#B8AFD1] hover:text-[#F5F3FA] transition-colors"
+                className="w-full rounded-xl border-2 border-dashed border-white/10 hover:border-[#CCFF00]/50 py-6 flex flex-col items-center gap-2 text-xs text-[#A8A8AF] hover:text-[#F4F4F0] transition-colors"
               >
                 <Upload className="w-5 h-5 text-[#CCFF00]" />
                 <span>Click to attach reference files</span>
-                <span className="text-[#7A7099]">PNG, JPG, GIF, SVG up to 10MB each</span>
+                <span className="text-[#6B6B72]">PNG, JPG, GIF, SVG up to 10MB each</span>
               </button>
 
               <input
@@ -363,13 +363,13 @@ function RequestPageInner() {
                   {attachments.map((file, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 bg-[#0F0529] border border-[#6A0DAD]/30 rounded-lg px-3 py-1.5 text-xs text-[#B8AFD1]"
+                      className="flex items-center gap-2 bg-[#0B0B0D] border border-white/[0.08] rounded-lg px-3 py-1.5 text-xs text-[#A8A8AF]"
                     >
                       <span className="truncate max-w-[120px]">{file.name}</span>
                       <button
                         type="button"
                         onClick={() => removeAttachment(idx)}
-                        className="text-[#7A7099] hover:text-red-400 transition-colors"
+                        className="text-[#6B6B72] hover:text-red-400 transition-colors"
                       >
                         <X className="w-3.5 h-3.5" />
                       </button>
@@ -384,11 +384,11 @@ function RequestPageInner() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-4 rounded-full text-sm font-bold text-[#0F0529] bg-[#CCFF00] hover:bg-[#B8E600] disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-glow-lime hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-full text-sm font-bold text-[#0B0B0D] bg-[#CCFF00] hover:bg-[#B8E600] disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-glow-lime hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <>
-                <div className="w-4 h-4 border-2 border-[#0F0529]/30 border-t-[#0F0529] rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[#0B0B0D]/30 border-t-[#0B0B0D] rounded-full animate-spin" />
                 <span>Submitting brief...</span>
               </>
             ) : (
@@ -399,7 +399,7 @@ function RequestPageInner() {
             )}
           </button>
 
-          <p className="text-center text-[11px] text-[#7A7099] font-mono">
+          <p className="text-center text-[11px] text-[#6B6B72] font-mono">
             By submitting, you agree that all quoted pricing is in GTA World in-character currency
             ($). No real-world payments.
           </p>
@@ -411,7 +411,7 @@ function RequestPageInner() {
 
 export default function RequestPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-10 h-10 rounded-full border-4 border-[#6A0DAD]/30 border-t-[#CCFF00] animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-10 h-10 rounded-full border-4 border-white/[0.08] border-t-[#CCFF00] animate-spin" /></div>}>
       <RequestPageInner />
     </Suspense>
   );

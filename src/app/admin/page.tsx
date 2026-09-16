@@ -187,7 +187,7 @@ export default function AdminPage() {
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 rounded-full border-4 border-[#6A0DAD]/30 border-t-[#CCFF00] animate-spin" />
+        <div className="w-10 h-10 rounded-full border-4 border-white/[0.08] border-t-[#CCFF00] animate-spin" />
       </div>
     );
   }
@@ -197,18 +197,18 @@ export default function AdminPage() {
       <div className="min-h-screen flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-[#1B0F3D] border border-[#6A0DAD]/40 flex items-center justify-center text-[#CCFF00] mx-auto mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-[#1B1B20] border border-white/10 flex items-center justify-center text-[#CCFF00] mx-auto mb-4">
               <ShieldCheck className="w-7 h-7" />
             </div>
-            <h1 className="text-2xl font-display font-black text-[#F5F3FA]">Admin Portal</h1>
-            <p className="text-xs text-[#B8AFD1] mt-1">Vortex Creative Studio — Internal Access</p>
-            <p className="text-sm text-[#B8AFD1] mt-4">
+            <h1 className="text-2xl font-display font-black text-[#F4F4F0]">Admin Portal</h1>
+            <p className="text-xs text-[#A8A8AF] mt-1">SAUVAGE™ — Internal Access</p>
+            <p className="text-sm text-[#A8A8AF] mt-4">
               You must be an authorized administrator to view this page.
             </p>
           </div>
           <button
             onClick={() => signIn("discord", { callbackUrl: "/admin" })}
-            className="w-full py-3.5 rounded-full text-xs font-bold text-[#0F0529] bg-[#5865F2] hover:bg-[#4752C4] transition-colors flex items-center justify-center gap-3"
+            className="w-full py-3.5 rounded-full text-xs font-bold text-[#0B0B0D] bg-[#5865F2] hover:bg-[#4752C4] transition-colors flex items-center justify-center gap-3"
           >
             <ShieldCheck className="w-4 h-4" />
             <span>Sign in with Discord</span>
@@ -227,22 +227,22 @@ export default function AdminPage() {
             <ShieldCheck className="w-5 h-5 text-[#CCFF00]" />
             <span className="text-xs font-mono text-[#CCFF00] uppercase font-bold">Admin Portal</span>
           </div>
-<h1 className="text-2xl sm:text-3xl font-display font-black text-[#F5F3FA]">
-        Vortex Creative Studio Dashboard
+<h1 className="text-2xl sm:text-3xl font-display font-black text-[#F4F4F0]">
+        SAUVAGE™ Dashboard
       </h1>
     </div>
     <div className="flex items-center gap-3">
       <button
         onClick={loadData}
         disabled={loading}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#160B36] border border-[#6A0DAD]/40 hover:border-[#CCFF00]/40 text-xs text-[#B8AFD1] hover:text-[#F5F3FA] transition-all"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#141417] border border-white/10 hover:border-[#CCFF00]/40 text-xs text-[#A8A8AF] hover:text-[#F4F4F0] transition-all"
       >
         <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
         <span>Sync</span>
       </button>
       <button
         onClick={() => signOut({ callbackUrl: "/admin" })}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#160B36] border border-[#6A0DAD]/40 hover:border-red-500/40 text-xs text-[#B8AFD1] hover:text-red-300 transition-all"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#141417] border border-white/10 hover:border-red-500/40 text-xs text-[#A8A8AF] hover:text-red-300 transition-all"
       >
         <LogOut className="w-4 h-4" />
         <span>Logout</span>
@@ -258,25 +258,25 @@ export default function AdminPage() {
           { label: "Paid Projects", value: paid, Icon: CheckCircle2, color: "text-green-300" },
           { label: "Total Earned", value: `$${totalEarned.toLocaleString()}`, Icon: DollarSign, color: "text-[#CCFF00]" },
         ].map(({ label, value, Icon, color }) => (
-          <div key={label} className="rounded-2xl bg-[#160B36] border border-[#6A0DAD]/30 p-5 flex flex-col gap-2">
+          <div key={label} className="rounded-2xl bg-[#141417] border border-white/[0.08] p-5 flex flex-col gap-2">
             <Icon className={`w-5 h-5 ${color}`} />
             <div className={`font-display font-black text-2xl ${color} font-mono`}>{value}</div>
-            <div className="text-xs text-[#B8AFD1]">{label}</div>
+            <div className="text-xs text-[#A8A8AF]">{label}</div>
           </div>
         ))}
       </div>
 
       {/* Merchant Balance */}
       {balance && (
-        <div className="rounded-2xl bg-gradient-to-r from-[#1B0F3D] to-[#160B36] border border-[#6A0DAD]/40 p-5 mb-8 flex items-center justify-between flex-wrap gap-4">
+        <div className="rounded-2xl bg-gradient-to-r from-[#1B1B20] to-[#141417] border border-white/10 p-5 mb-8 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <div className="text-xs font-mono text-[#B8AFD1] uppercase mb-1">Fleeca Merchant Balance</div>
+            <div className="text-xs font-mono text-[#A8A8AF] uppercase mb-1">Fleeca Merchant Balance</div>
             <div className="font-display font-black text-3xl text-[#CCFF00] font-mono">
               ${balance.balance.toLocaleString()}
             </div>
-            <div className="text-xs text-[#7A7099] mt-0.5">{balance.account_name}</div>
+            <div className="text-xs text-[#6B6B72] mt-0.5">{balance.account_name}</div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-[#CCFF00] font-mono bg-[#0F0529] px-4 py-2 rounded-full border border-[#6A0DAD]/30">
+          <div className="flex items-center gap-2 text-xs text-[#CCFF00] font-mono bg-[#0B0B0D] px-4 py-2 rounded-full border border-white/[0.08]">
             <span className="w-2 h-2 rounded-full bg-[#CCFF00] animate-ping" />
             <span>{balance.mode === 1 ? "LIVE MODE" : "SANDBOX MODE"}</span>
           </div>
@@ -284,12 +284,12 @@ export default function AdminPage() {
       )}
 
       {/* Requests Table */}
-      <div className="rounded-3xl bg-[#160B36] border border-[#6A0DAD]/30 overflow-hidden mb-8">
+      <div className="rounded-3xl bg-[#141417] border border-white/[0.08] overflow-hidden mb-8">
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <h2 className="text-sm font-mono font-bold text-[#CCFF00] uppercase tracking-wider">
             Design Requests
           </h2>
-          <span className="text-xs text-[#7A7099] font-mono">{requests.length} total</span>
+          <span className="text-xs text-[#6B6B72] font-mono">{requests.length} total</span>
         </div>
 
         <div className="overflow-x-auto">
@@ -297,7 +297,7 @@ export default function AdminPage() {
             <thead>
               <tr className="border-b border-white/5">
                 {["ID", "Client", "Project Type", "Urgency", "Status", "Quote", "Actions"].map((h) => (
-                  <th key={h} className="text-left px-5 py-3 text-[10px] font-mono text-[#7A7099] uppercase tracking-wider">
+                  <th key={h} className="text-left px-5 py-3 text-[10px] font-mono text-[#6B6B72] uppercase tracking-wider">
                     {h}
                   </th>
                 ))}
@@ -308,17 +308,17 @@ export default function AdminPage() {
                 <tr key={req.id} className="border-b border-white/5 hover:bg-white/2 transition-colors">
                   <td className="px-5 py-4 font-mono text-[#CCFF00]">{req.id}</td>
                   <td className="px-5 py-4">
-                    <div className="text-[#F5F3FA] font-semibold">{req.clientName}</div>
-                    <div className="text-[#7A7099] text-[10px]">{req.discordTag}</div>
+                    <div className="text-[#F4F4F0] font-semibold">{req.clientName}</div>
+                    <div className="text-[#6B6B72] text-[10px]">{req.discordTag}</div>
                   </td>
-                  <td className="px-5 py-4 text-[#B8AFD1]">{req.projectType}</td>
+                  <td className="px-5 py-4 text-[#A8A8AF]">{req.projectType}</td>
                   <td className="px-5 py-4">
                     <span className={`font-mono px-2 py-0.5 rounded-full text-[10px] border ${
                       req.urgency === "rush"
                         ? "bg-red-500/10 text-red-300 border-red-500/30"
                         : req.urgency === "priority"
                         ? "bg-amber-500/10 text-amber-300 border-amber-500/30"
-                        : "bg-[#160B36] text-[#B8AFD1] border-[#6A0DAD]/30"
+                        : "bg-[#141417] text-[#A8A8AF] border-white/[0.08]"
                     }`}>
                       {req.urgency}
                     </span>
@@ -336,7 +336,7 @@ export default function AdminPage() {
                       {req.status === "pending_quote" && (
                         <button
                           onClick={() => { setQuotingReq(req); setQuoteMsg(""); }}
-                          className="px-3 py-1.5 rounded-full text-[10px] font-bold text-[#0F0529] bg-[#CCFF00] hover:bg-[#B8E600] transition-colors"
+                          className="px-3 py-1.5 rounded-full text-[10px] font-bold text-[#0B0B0D] bg-[#CCFF00] hover:bg-[#B8E600] transition-colors"
                         >
                           Issue Quote
                         </button>
@@ -359,7 +359,7 @@ export default function AdminPage() {
                       )}
                       <Link
                         href={`/request/${req.id}`}
-                        className="text-[#B8AFD1] hover:text-[#CCFF00] transition-colors"
+                        className="text-[#A8A8AF] hover:text-[#CCFF00] transition-colors"
                       >
                         <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
@@ -371,7 +371,7 @@ export default function AdminPage() {
           </table>
 
           {requests.length === 0 && (
-            <div className="py-12 text-center text-xs text-[#7A7099]">
+            <div className="py-12 text-center text-xs text-[#6B6B72]">
               No design requests yet. Submit a brief via{" "}
               <Link href="/request" className="text-[#CCFF00] hover:underline">
                 /request
@@ -382,7 +382,7 @@ export default function AdminPage() {
       </div>
 
       {/* Transactions Ledger */}
-      <div className="rounded-3xl bg-[#160B36] border border-[#6A0DAD]/30 overflow-hidden mb-8">
+      <div className="rounded-3xl bg-[#141417] border border-white/[0.08] overflow-hidden mb-8">
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <DollarSign className="w-4 h-4 text-[#CCFF00]" />
@@ -390,7 +390,7 @@ export default function AdminPage() {
               Fleeca Transactions Ledger
             </h2>
           </div>
-          <span className="text-xs text-[#7A7099] font-mono">{payments.length} total</span>
+          <span className="text-xs text-[#6B6B72] font-mono">{payments.length} total</span>
         </div>
 
         <div className="overflow-x-auto">
@@ -398,7 +398,7 @@ export default function AdminPage() {
             <thead>
               <tr className="border-b border-white/5">
                 {["Transaction ID", "Routing #", "Payer Name", "Amount", "Status", "Date"].map((h) => (
-                  <th key={h} className="text-left px-5 py-3 text-[10px] font-mono text-[#7A7099] uppercase tracking-wider">
+                  <th key={h} className="text-left px-5 py-3 text-[10px] font-mono text-[#6B6B72] uppercase tracking-wider">
                     {h}
                   </th>
                 ))}
@@ -407,9 +407,9 @@ export default function AdminPage() {
             <tbody>
               {payments.map((pay) => (
                 <tr key={pay.paymentId} className="border-b border-white/5 hover:bg-white/2 transition-colors">
-                  <td className="px-5 py-4 font-mono text-[#F5F3FA]">{pay.paymentId}</td>
-                  <td className="px-5 py-4 font-mono text-[#B8AFD1]">{pay.payerRouting || "—"}</td>
-                  <td className="px-5 py-4 text-[#B8AFD1]">{pay.payerName || "—"}</td>
+                  <td className="px-5 py-4 font-mono text-[#F4F4F0]">{pay.paymentId}</td>
+                  <td className="px-5 py-4 font-mono text-[#A8A8AF]">{pay.payerRouting || "—"}</td>
+                  <td className="px-5 py-4 text-[#A8A8AF]">{pay.payerName || "—"}</td>
                   <td className="px-5 py-4 font-mono text-[#CCFF00] font-bold">
                     +${pay.amount.toLocaleString()}
                   </td>
@@ -424,7 +424,7 @@ export default function AdminPage() {
                       {pay.status.replace("payment_", "").toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-5 py-4 text-[#7A7099] font-mono">
+                  <td className="px-5 py-4 text-[#6B6B72] font-mono">
                     {new Date(pay.paidAt || pay.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
@@ -433,7 +433,7 @@ export default function AdminPage() {
           </table>
 
           {payments.length === 0 && (
-            <div className="py-12 text-center text-xs text-[#7A7099]">
+            <div className="py-12 text-center text-xs text-[#6B6B72]">
               No transactions recorded yet.
             </div>
           )}
@@ -449,33 +449,33 @@ export default function AdminPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setQuotingReq(null)}
-              className="absolute inset-0 bg-[#0F0529]/80 backdrop-blur-xl"
+              className="absolute inset-0 bg-[#0B0B0D]/80 backdrop-blur-xl"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative z-10 w-full max-w-md bg-[#1B0F3D] border border-[#6A0DAD]/60 rounded-3xl p-8 shadow-2xl"
+              className="relative z-10 w-full max-w-md bg-[#1B1B20] border border-white/20 rounded-3xl p-8 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-display font-bold text-[#F5F3FA]">Issue Quote</h2>
+                <h2 className="text-lg font-display font-bold text-[#F4F4F0]">Issue Quote</h2>
                 <button
                   onClick={() => setQuotingReq(null)}
-                  className="w-8 h-8 rounded-full bg-[#0F0529] flex items-center justify-center text-[#B8AFD1] hover:text-white"
+                  className="w-8 h-8 rounded-full bg-[#0B0B0D] flex items-center justify-center text-[#A8A8AF] hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="text-xs text-[#B8AFD1] bg-[#0F0529]/60 rounded-xl p-4 mb-6 space-y-1">
-                <div><span className="text-[#7A7099]">Request:</span> <strong className="text-[#CCFF00]">{quotingReq.id}</strong></div>
-                <div><span className="text-[#7A7099]">Client:</span> <strong className="text-[#F5F3FA]">{quotingReq.clientName}</strong></div>
-                <div><span className="text-[#7A7099]">Project:</span> {quotingReq.projectType}</div>
+              <div className="text-xs text-[#A8A8AF] bg-[#0B0B0D]/60 rounded-xl p-4 mb-6 space-y-1">
+                <div><span className="text-[#6B6B72]">Request:</span> <strong className="text-[#CCFF00]">{quotingReq.id}</strong></div>
+                <div><span className="text-[#6B6B72]">Client:</span> <strong className="text-[#F4F4F0]">{quotingReq.clientName}</strong></div>
+                <div><span className="text-[#6B6B72]">Project:</span> {quotingReq.projectType}</div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-mono text-[#B8AFD1] uppercase tracking-wider block mb-1.5">
+                  <label className="text-xs font-mono text-[#A8A8AF] uppercase tracking-wider block mb-1.5">
                     Quote Amount (GTA$) *
                   </label>
                   <div className="relative">
@@ -484,20 +484,20 @@ export default function AdminPage() {
                       value={quoteAmount}
                       onChange={(e) => setQuoteAmount(e.target.value)}
                       placeholder="25000"
-                      className="w-full bg-[#0F0529] border border-[#6A0DAD]/40 focus:border-[#CCFF00] rounded-xl pl-8 pr-4 py-3 text-sm text-[#F5F3FA] outline-none transition-colors font-mono"
+                      className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl pl-8 pr-4 py-3 text-sm text-[#F4F4F0] outline-none transition-colors font-mono"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-mono text-[#B8AFD1] uppercase tracking-wider block mb-1.5">
-                    Quote Notes <span className="text-[#7A7099] lowercase">(optional)</span>
+                  <label className="text-xs font-mono text-[#A8A8AF] uppercase tracking-wider block mb-1.5">
+                    Quote Notes <span className="text-[#6B6B72] lowercase">(optional)</span>
                   </label>
                   <textarea
                     value={quoteNotes}
                     onChange={(e) => setQuoteNotes(e.target.value)}
                     rows={3}
                     placeholder="Breakdown: e.g. 4-page menu design + forum BBCode layout"
-                    className="w-full bg-[#0F0529] border border-[#6A0DAD]/40 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F5F3FA] outline-none transition-colors resize-none"
+                    className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] outline-none transition-colors resize-none"
                   />
                 </div>
 
@@ -510,10 +510,10 @@ export default function AdminPage() {
                 <button
                   onClick={handleIssueQuote}
                   disabled={quoting}
-                  className="w-full py-3.5 rounded-full text-xs font-bold text-[#0F0529] bg-[#CCFF00] hover:bg-[#B8E600] disabled:opacity-60 transition-all shadow-glow-lime flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-full text-xs font-bold text-[#0B0B0D] bg-[#CCFF00] hover:bg-[#B8E600] disabled:opacity-60 transition-all shadow-glow-lime flex items-center justify-center gap-2"
                 >
                   {quoting ? (
-                    <div className="w-4 h-4 border-2 border-[#0F0529]/30 border-t-[#0F0529] rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-[#0B0B0D]/30 border-t-[#0B0B0D] rounded-full animate-spin" />
                   ) : (
                     <>
                       <CreditCard className="w-4 h-4" />
@@ -536,61 +536,61 @@ export default function AdminPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setDeliveryReq(null)}
-              className="absolute inset-0 bg-[#0F0529]/80 backdrop-blur-xl"
+              className="absolute inset-0 bg-[#0B0B0D]/80 backdrop-blur-xl"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative z-10 w-full max-w-md bg-[#1B0F3D] border border-[#6A0DAD]/60 rounded-3xl p-8 shadow-2xl"
+              className="relative z-10 w-full max-w-md bg-[#1B1B20] border border-white/20 rounded-3xl p-8 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-display font-bold text-[#F5F3FA]">Handover Deliverables</h2>
+                <h2 className="text-lg font-display font-bold text-[#F4F4F0]">Handover Deliverables</h2>
                 <button
                   onClick={() => setDeliveryReq(null)}
-                  className="w-8 h-8 rounded-full bg-[#0F0529] flex items-center justify-center text-[#B8AFD1] hover:text-white"
+                  className="w-8 h-8 rounded-full bg-[#0B0B0D] flex items-center justify-center text-[#A8A8AF] hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="text-xs text-[#B8AFD1] bg-[#0F0529]/60 rounded-xl p-4 mb-6 space-y-1">
-                <div><span className="text-[#7A7099]">Request:</span> <strong className="text-[#CCFF00]">{deliveryReq.id}</strong></div>
-                <div><span className="text-[#7A7099]">Client:</span> <strong className="text-[#F5F3FA]">{deliveryReq.clientName}</strong></div>
+              <div className="text-xs text-[#A8A8AF] bg-[#0B0B0D]/60 rounded-xl p-4 mb-6 space-y-1">
+                <div><span className="text-[#6B6B72]">Request:</span> <strong className="text-[#CCFF00]">{deliveryReq.id}</strong></div>
+                <div><span className="text-[#6B6B72]">Client:</span> <strong className="text-[#F4F4F0]">{deliveryReq.clientName}</strong></div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-mono text-[#B8AFD1] uppercase tracking-wider block mb-1.5">
+                  <label className="text-xs font-mono text-[#A8A8AF] uppercase tracking-wider block mb-1.5">
                     File URL (Google Drive / Imgur) *
                   </label>
                   <input
                     value={deliverablesUrl}
                     onChange={(e) => setDeliverablesUrl(e.target.value)}
                     placeholder="https://imgur.com/a/..."
-                    className="w-full bg-[#0F0529] border border-[#6A0DAD]/40 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F5F3FA] outline-none transition-colors font-mono"
+                    className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] outline-none transition-colors font-mono"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-mono text-[#B8AFD1] uppercase tracking-wider block mb-1.5">
-                    Delivery Notes <span className="text-[#7A7099] lowercase">(optional)</span>
+                  <label className="text-xs font-mono text-[#A8A8AF] uppercase tracking-wider block mb-1.5">
+                    Delivery Notes <span className="text-[#6B6B72] lowercase">(optional)</span>
                   </label>
                   <textarea
                     value={deliveryNotes}
                     onChange={(e) => setDeliveryNotes(e.target.value)}
                     rows={3}
                     placeholder="Here are your final PNGs and source files. The font used is Montserrat."
-                    className="w-full bg-[#0F0529] border border-[#6A0DAD]/40 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F5F3FA] outline-none transition-colors resize-none"
+                    className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] outline-none transition-colors resize-none"
                   />
                 </div>
 
                 <button
                   onClick={handleIssueDelivery}
                   disabled={delivering || !deliverablesUrl}
-                  className="w-full py-3.5 rounded-full text-xs font-bold text-[#0F0529] bg-[#CCFF00] hover:bg-[#B8E600] disabled:opacity-60 transition-all shadow-glow-lime flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-full text-xs font-bold text-[#0B0B0D] bg-[#CCFF00] hover:bg-[#B8E600] disabled:opacity-60 transition-all shadow-glow-lime flex items-center justify-center gap-2"
                 >
                   {delivering ? (
-                    <div className="w-4 h-4 border-2 border-[#0F0529]/30 border-t-[#0F0529] rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-[#0B0B0D]/30 border-t-[#0B0B0D] rounded-full animate-spin" />
                   ) : (
                     <>
                       <Package className="w-4 h-4" />

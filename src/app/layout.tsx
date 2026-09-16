@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
@@ -8,6 +8,15 @@ import { siteConfig } from "../config/siteConfig";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  weight: "variable",
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -33,8 +42,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} scroll-smooth`}>
-      <body className="bg-[#0F0529] text-[#F5F3FA] antialiased selection:bg-[#CCFF00] selection:text-[#0F0529] flex flex-col min-h-screen">
+    <html lang="en" className={`${inter.variable} ${fraunces.variable} scroll-smooth`}>
+      <body className="bg-background text-text-primary antialiased selection:bg-electric-lime selection:text-background flex flex-col min-h-screen">
         <NextAuthProvider>
           <Navbar />
           <main className="flex-grow">{children}</main>

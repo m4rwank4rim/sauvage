@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sparkles, ArrowRight, ShieldCheck, User } from "lucide-react";
+import { Menu, X, ArrowRight, ShieldCheck, User } from "lucide-react";
 import { siteConfig } from "../config/siteConfig";
 import { useSession } from "next-auth/react";
 
@@ -16,9 +16,10 @@ export const Navbar: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 24);
     };
-    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -30,61 +31,62 @@ export const Navbar: React.FC = () => {
     { label: "Contact", href: "/contact" },
   ];
 
+  const isActive = (href: string) => pathname === href;
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 py-4 md:py-6 pointer-events-none transition-all duration-300">
-      <nav
-        className={`pointer-events-auto flex items-center justify-between gap-4 md:gap-8 px-5 py-2.5 rounded-full transition-all duration-300 ${
-          scrolled
-            ? "bg-[#160B36]/85 backdrop-blur-xl border border-[#6A0DAD]/40 shadow-card-subtle"
-            : "bg-[#160B36]/60 backdrop-blur-lg border border-[#6A0DAD]/25"
-        } max-w-5xl w-full`}
-        aria-label="Main Navigation"
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
+        scrolled
+          ? "bg-[#0B0B0D]/80 backdrop-blur-xl border-b border-white/[0.07]"
+          : "bg-transparent border-b border-transparent"
+      }`}
+    >
+      <div
+        className={`max-w-7xl mx-auto flex items-center justify-between gap-4 px-5 md:px-8 transition-all duration-300 ${
+          scrolled ? "py-2.5" : "py-4 md:py-5"
+        }`}
       >
-        {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#6A0DAD] to-[#CCFF00] p-[1.5px] transition-transform duration-300 group-hover:scale-105">
-            <div className="w-full h-full rounded-full bg-[#0F0529] flex items-center justify-center">
-              <span className="font-display font-black text-sm text-[#CCFF00] tracking-tighter">
-                VX
-              </span>
-            </div>
+        {/* Brand */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-8 h-8 rounded-[8px] border border-electric-lime/40 bg-electric-lime/[0.06] flex items-center justify-center transition-colors group-hover:bg-electric-lime/15">
+            <span className="font-display font-semibold italic text-sm text-electric-lime leading-none">
+              S
+            </span>
           </div>
-          <div className="flex flex-col">
-            <span className="font-display font-black text-base tracking-tight text-[#F5F3FA] group-hover:text-white transition-colors">
+          <div className="flex flex-col leading-none">
+            <span className="font-display font-medium text-lg tracking-tight text-text-primary transition-colors group-hover:text-white">
               {siteConfig.agencyName}
             </span>
-            <span className="text-[9px] uppercase tracking-widest text-[#B8AFD1] font-mono -mt-1 hidden sm:block">
-              GTAW Creative
+            <span className="hidden sm:block font-mono text-[9px] uppercase tracking-[0.28em] text-text-muted mt-1">
+              Los Santos · Est. GTAW
             </span>
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center gap-1 bg-[#0F0529]/60 px-3 py-1 rounded-full border border-white/5">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.label}
-                href={link.href}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
-                  isActive
-                    ? "bg-[#CCFF00] text-[#0F0529] font-bold shadow-glow-lime"
-                    : "text-[#B8AFD1] hover:text-[#F5F3FA] hover:bg-white/5"
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </div>
+        {/* Desktop Nav */}
+        <nav className="hidden lg:flex items-center gap-1" aria-label="Main Navigation">
+          {navLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className={`group relative px-3.5 py-2 text-[13px] tracking-wide transition-colors ${
+                isActive(link.href)
+                  ? "text-electric-lime"
+                  : "text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              {link.label}
+              <span className="absolute left-3.5 right-3.5 -bottom-[1px] h-px origin-left scale-x-0 bg-electric-lime transition-transform duration-300 group-hover:scale-x-100" />
+            </Link>
+          ))}
+        </nav>
 
-        {/* Action Buttons */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* Actions */}
+        <div className="hidden lg:flex items-center gap-5">
           {session ? (
             <Link
               href="/dashboard"
-              className="text-[11px] font-mono text-[#B8AFD1] hover:text-[#CCFF00] transition-colors px-2 py-1 flex items-center gap-1"
+              className="flex items-center gap-1.5 text-[12px] font-mono text-text-secondary hover:text-electric-lime transition-colors"
             >
               <User className="w-3.5 h-3.5" />
               <span>{session.user?.name}</span>
@@ -92,7 +94,7 @@ export const Navbar: React.FC = () => {
           ) : (
             <Link
               href="/login"
-              className="text-[11px] font-mono text-[#B8AFD1] hover:text-white transition-colors px-2 py-1 flex items-center gap-1"
+              className="flex items-center gap-1.5 text-[12px] font-mono text-text-secondary hover:text-text-primary transition-colors"
             >
               <User className="w-3.5 h-3.5" />
               <span>Sign In</span>
@@ -101,7 +103,7 @@ export const Navbar: React.FC = () => {
 
           <Link
             href="/admin"
-            className="text-[11px] font-mono text-[#B8AFD1] hover:text-[#CCFF00] transition-colors px-2 py-1 flex items-center gap-1"
+            className="flex items-center gap-1.5 text-[12px] font-mono text-text-secondary hover:text-electric-lime transition-colors"
           >
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Admin</span>
@@ -109,40 +111,40 @@ export const Navbar: React.FC = () => {
 
           <Link
             href="/request"
-            className="group relative inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-[#0F0529] bg-[#CCFF00] hover:bg-[#B8E600] transition-all duration-300 shadow-glow-lime hover:scale-[1.02] active:scale-[0.98]"
+            className="group inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-[13px] font-semibold text-[#0B0B0D] bg-electric-lime hover:bg-electric-lime-hover shadow-glow-lime transition-all duration-300 hover:shadow-glow-lime-strong hover:scale-[1.02] active:scale-[0.98]"
           >
             <span>Start Project</span>
             <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
           </Link>
         </div>
 
-        {/* Mobile Burger Toggle */}
+        {/* Mobile toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden text-[#F5F3FA] hover:text-[#CCFF00] p-1.5 rounded-lg bg-white/5"
+          className="lg:hidden text-text-primary p-2 rounded-lg border border-white/[0.08] bg-white/[0.03]"
           aria-label="Toggle Navigation Menu"
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
-      </nav>
+      </div>
 
       {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.2 }}
-            className="pointer-events-auto absolute top-20 left-4 right-4 bg-[#160B36]/95 backdrop-blur-2xl border border-[#6A0DAD]/40 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 md:hidden"
+            className="lg:hidden mx-4 md:mx-8 mt-2 bg-surface-2/95 backdrop-blur-2xl border border-white/[0.08] rounded-2xl p-5 shadow-lift"
           >
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="px-4 py-3 rounded-2xl text-sm font-medium text-[#B8AFD1] hover:text-[#F5F3FA] hover:bg-white/5 transition-colors"
+                  className="px-4 py-3 rounded-xl text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/[0.04] transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -150,24 +152,41 @@ export const Navbar: React.FC = () => {
               <Link
                 href="/admin"
                 onClick={() => setMobileOpen(false)}
-                className="px-4 py-3 rounded-2xl text-sm font-medium text-[#B8AFD1] hover:text-[#CCFF00] hover:bg-white/5 transition-colors flex items-center gap-2"
+                className="px-4 py-3 rounded-xl text-sm font-medium text-text-secondary hover:text-electric-lime hover:bg-white/[0.04] transition-colors flex items-center gap-2"
               >
                 <ShieldCheck className="w-4 h-4" />
                 <span>Admin Portal</span>
               </Link>
             </div>
 
-            <div className="border-t border-white/10 pt-4 flex flex-col gap-3">
+            <div className="mt-3 border-t border-white/[0.08] pt-4 flex flex-col gap-3">
+              {session ? (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full py-3 rounded-full text-center text-sm text-text-secondary border border-white/[0.1] hover:text-electric-lime transition-colors"
+                >
+                  {session.user?.name}
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full py-3 rounded-full text-center text-sm text-text-secondary border border-white/[0.1] hover:text-electric-lime transition-colors"
+                >
+                  Sign In
+                </Link>
+              )}
               <Link
                 href="/request"
                 onClick={() => setMobileOpen(false)}
-                className="w-full py-3 rounded-full text-center text-sm font-bold text-[#0F0529] bg-[#CCFF00] hover:bg-[#B8E600] transition-colors shadow-glow-lime flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-full text-center text-sm font-semibold text-[#0B0B0D] bg-electric-lime hover:bg-electric-lime-hover shadow-glow-lime flex items-center justify-center gap-2"
               >
                 <span>Start Project</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              <p className="text-center text-[10px] text-[#7A7099] font-mono">
-                Official Fleeca Gateway • GTA World Roleplay
+              <p className="text-center text-[10px] text-text-muted font-mono">
+                Official Fleeca Gateway · GTA World Roleplay
               </p>
             </div>
           </motion.div>

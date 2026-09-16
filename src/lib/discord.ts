@@ -39,7 +39,7 @@ export async function notifyDiscord(options: DiscordNotifyOptions): Promise<bool
     const res = await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: "Vortex Creative", embeds: [embed] }),
+      body: JSON.stringify({ username: "SAUVAGE", embeds: [embed] }),
     });
     if (!res.ok) {
       console.error("[Discord] webhook returned", res.status, await res.text().catch(() => ""));

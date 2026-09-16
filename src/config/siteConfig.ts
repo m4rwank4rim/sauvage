@@ -50,7 +50,7 @@ export interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-  agencyName: "Sauvage Creative",
+  agencyName: "SAUVAGE™",
   tagline: "Premier Brand & Visual Identity Agency of Los Santos",
   headline: "Graphic design that commands respect in Los Santos.",
   subheadline:
@@ -167,7 +167,7 @@ export const siteConfig: SiteConfig = {
       businessName: "CEO, Vance Security Group",
       avatarText: "DV",
       quote:
-        "Vortex overhauled our armored transit fleet liveries and our corporate thread. Within 48 hours of paying the Fleeca deposit, the assets were ready. Professionalism unmatched in Los Santos.",
+        "SAUVAGE overhauled our armored transit fleet liveries and our corporate thread. Within 48 hours of paying the Fleeca deposit, the assets were ready. Professionalism unmatched in Los Santos.",
       rating: 5,
       projectDelivered: "Fleet Liveries & Corporate Kit",
     },
@@ -235,5 +235,5 @@ export const siteConfig: SiteConfig = {
     },
   ],
   oocDisclaimer:
-    "OOC DISCLAIMER: Sauvage Creative is an in-character graphic design studio operating solely within the GTA World Roleplay (GTAW) environment. All transactions and currency values ($) represent GTA World in-game virtual money processed via the Fleeca Bank API. This project is not affiliated with, sponsored by, or endorsed by Rockstar Games, Take-Two Interactive, or any real-world financial institution.",
+    "OOC DISCLAIMER: SAUVAGE is an in-character graphic design studio operating solely within the GTA World Roleplay (GTAW) environment. All transactions and currency values ($) represent GTA World in-game virtual money processed via the Fleeca Bank API. This project is not affiliated with, sponsored by, or endorsed by Rockstar Games, Take-Two Interactive, or any real-world financial institution.",
 };

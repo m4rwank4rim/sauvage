@@ -60,7 +60,7 @@ function PaymentResultPageInner() {
   const StatusIcon = () => {
     if (pageStatus === "loading") {
       return (
-        <div className="w-20 h-20 rounded-full border-4 border-[#6A0DAD]/40 border-t-[#CCFF00] animate-spin" />
+        <div className="w-20 h-20 rounded-full border-4 border-white/10 border-t-[#CCFF00] animate-spin" />
       );
     }
     if (pageStatus === "success") {
@@ -91,16 +91,16 @@ function PaymentResultPageInner() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-[#160B36] border border-[#6A0DAD]/40 rounded-3xl p-8 md:p-12 text-center flex flex-col items-center gap-6"
+          className="bg-[#141417] border border-white/10 rounded-3xl p-8 md:p-12 text-center flex flex-col items-center gap-6"
         >
           <StatusIcon />
 
           {pageStatus === "loading" && (
             <>
-              <h1 className="text-2xl font-display font-black text-[#F5F3FA]">
+              <h1 className="text-2xl font-display font-black text-[#F4F4F0]">
                 Verifying payment...
               </h1>
-              <p className="text-sm text-[#B8AFD1]">
+              <p className="text-sm text-[#A8A8AF]">
                 Confirming your Fleeca Bank transaction. Please wait.
               </p>
             </>
@@ -112,10 +112,10 @@ function PaymentResultPageInner() {
                 <div className="text-xs font-mono font-bold text-[#CCFF00] uppercase tracking-widest mb-2">
                   Fleeca Transaction Confirmed
                 </div>
-                <h1 className="text-3xl font-display font-black text-[#F5F3FA] mb-2">
+                <h1 className="text-3xl font-display font-black text-[#F4F4F0] mb-2">
                   Payment Successful
                 </h1>
-                <p className="text-sm text-[#B8AFD1]">
+                <p className="text-sm text-[#A8A8AF]">
                   Your deposit has been received and verified via Fleeca Bank Gateway. Our designers
                   have been notified and will begin your project promptly.
                 </p>
@@ -123,19 +123,19 @@ function PaymentResultPageInner() {
 
               {/* Receipt Card */}
               {paymentData && (
-                <div className="w-full rounded-2xl bg-[#0F0529] border border-[#6A0DAD]/30 p-5 text-left space-y-3">
+                <div className="w-full rounded-2xl bg-[#0B0B0D] border border-white/[0.08] p-5 text-left space-y-3">
                   <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#CCFF00] uppercase mb-1">
                     <Receipt className="w-4 h-4" />
                     <span>Transaction Receipt</span>
                   </div>
-                  <div className="flex justify-between text-xs text-[#B8AFD1]">
+                  <div className="flex justify-between text-xs text-[#A8A8AF]">
                     <span>Payment ID</span>
-                    <span className="font-mono text-[#F5F3FA] text-right max-w-[55%] truncate">
+                    <span className="font-mono text-[#F4F4F0] text-right max-w-[55%] truncate">
                       {paymentId}
                     </span>
                   </div>
                   {paymentData.amount && (
-                    <div className="flex justify-between text-xs text-[#B8AFD1]">
+                    <div className="flex justify-between text-xs text-[#A8A8AF]">
                       <span>Amount</span>
                       <span className="font-mono text-[#CCFF00] font-bold">
                         ${paymentData.amount.toLocaleString()} GTA$
@@ -143,20 +143,20 @@ function PaymentResultPageInner() {
                     </div>
                   )}
                   {paymentData.payerName && (
-                    <div className="flex justify-between text-xs text-[#B8AFD1]">
+                    <div className="flex justify-between text-xs text-[#A8A8AF]">
                       <span>Authorized By</span>
-                      <span className="font-mono text-[#F5F3FA]">{paymentData.payerName}</span>
+                      <span className="font-mono text-[#F4F4F0]">{paymentData.payerName}</span>
                     </div>
                   )}
                   {paymentData.description && (
-                    <div className="flex justify-between text-xs text-[#B8AFD1]">
+                    <div className="flex justify-between text-xs text-[#A8A8AF]">
                       <span>Reference</span>
-                      <span className="font-mono text-[#F5F3FA] text-right max-w-[55%]">
+                      <span className="font-mono text-[#F4F4F0] text-right max-w-[55%]">
                         {paymentData.description}
                       </span>
                     </div>
                   )}
-                  <div className="flex justify-between text-xs text-[#B8AFD1] pt-2 border-t border-white/5">
+                  <div className="flex justify-between text-xs text-[#A8A8AF] pt-2 border-t border-white/5">
                     <span>Status</span>
                     <span className="text-[#CCFF00] font-bold font-mono">CONFIRMED</span>
                   </div>
@@ -167,7 +167,7 @@ function PaymentResultPageInner() {
                 {paymentData?.requestId && (
                   <Link
                     href={`/request/${paymentData.requestId}`}
-                    className="flex-1 py-3 rounded-full text-xs font-bold text-[#0F0529] bg-[#CCFF00] hover:bg-[#B8E600] flex items-center justify-center gap-2 shadow-glow-lime"
+                    className="flex-1 py-3 rounded-full text-xs font-bold text-[#0B0B0D] bg-[#CCFF00] hover:bg-[#B8E600] flex items-center justify-center gap-2 shadow-glow-lime"
                   >
                     <span>Track Your Project</span>
                     <ArrowRight className="w-4 h-4" />
@@ -175,7 +175,7 @@ function PaymentResultPageInner() {
                 )}
                 <Link
                   href="/"
-                  className="flex-1 py-3 rounded-full text-xs text-[#B8AFD1] hover:text-white bg-[#0F0529] hover:bg-white/5 border border-white/10 flex items-center justify-center"
+                  className="flex-1 py-3 rounded-full text-xs text-[#A8A8AF] hover:text-white bg-[#0B0B0D] hover:bg-white/5 border border-white/10 flex items-center justify-center"
                 >
                   Return to Studio
                 </Link>
@@ -189,17 +189,17 @@ function PaymentResultPageInner() {
                 <div className="text-xs font-mono font-bold text-red-400 uppercase tracking-widest mb-2">
                   Transaction Failed
                 </div>
-                <h1 className="text-2xl font-display font-black text-[#F5F3FA] mb-2">
+                <h1 className="text-2xl font-display font-black text-[#F4F4F0] mb-2">
                   Payment Unsuccessful
                 </h1>
-                <p className="text-sm text-[#B8AFD1]">
+                <p className="text-sm text-[#A8A8AF]">
                   The Fleeca Bank transfer could not be processed. This may be due to insufficient
                   in-game funds or a session timeout. Please try again.
                 </p>
               </div>
               <Link
                 href="/"
-                className="w-full py-3.5 rounded-full text-xs font-bold text-[#0F0529] bg-[#CCFF00] hover:bg-[#B8E600] flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-full text-xs font-bold text-[#0B0B0D] bg-[#CCFF00] hover:bg-[#B8E600] flex items-center justify-center gap-2"
               >
                 Return to Studio
               </Link>
@@ -212,17 +212,17 @@ function PaymentResultPageInner() {
                 <div className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest mb-2">
                   Awaiting Confirmation
                 </div>
-                <h1 className="text-2xl font-display font-black text-[#F5F3FA] mb-2">
+                <h1 className="text-2xl font-display font-black text-[#F4F4F0] mb-2">
                   Payment Pending
                 </h1>
-                <p className="text-sm text-[#B8AFD1]">
+                <p className="text-sm text-[#A8A8AF]">
                   Your transaction is still being processed by Fleeca Bank. This page will update
                   once the webhook confirmation is received. Please check back shortly.
                 </p>
               </div>
               <Link
                 href="/"
-                className="w-full py-3.5 rounded-full text-xs font-bold text-[#F5F3FA] bg-[#160B36] hover:bg-[#1B0F3D] border border-[#6A0DAD]/40 flex items-center justify-center"
+                className="w-full py-3.5 rounded-full text-xs font-bold text-[#F4F4F0] bg-[#141417] hover:bg-[#1B1B20] border border-white/10 flex items-center justify-center"
               >
                 Return to Studio
               </Link>
@@ -232,21 +232,21 @@ function PaymentResultPageInner() {
           {pageStatus === "error" && (
             <>
               <div>
-                <h1 className="text-2xl font-display font-black text-[#F5F3FA] mb-2">
+                <h1 className="text-2xl font-display font-black text-[#F4F4F0] mb-2">
                   Verification Error
                 </h1>
-                <p className="text-sm text-[#B8AFD1]">{errorMsg}</p>
+                <p className="text-sm text-[#A8A8AF]">{errorMsg}</p>
               </div>
               <Link
                 href="/"
-                className="w-full py-3.5 rounded-full text-xs font-bold text-[#F5F3FA] bg-[#160B36] hover:bg-[#1B0F3D] border border-[#6A0DAD]/40 flex items-center justify-center"
+                className="w-full py-3.5 rounded-full text-xs font-bold text-[#F4F4F0] bg-[#141417] hover:bg-[#1B1B20] border border-white/10 flex items-center justify-center"
               >
                 Return to Studio
               </Link>
             </>
           )}
 
-          <p className="text-[11px] text-[#7A7099] font-mono">
+          <p className="text-[11px] text-[#6B6B72] font-mono">
             All payments processed via Fleeca Bank Gateway API · GTA World Roleplay · In-game
             currency only
           </p>
@@ -258,7 +258,7 @@ function PaymentResultPageInner() {
 
 export default function PaymentResultPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-10 h-10 rounded-full border-4 border-[#6A0DAD]/30 border-t-[#CCFF00] animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-10 h-10 rounded-full border-4 border-white/[0.08] border-t-[#CCFF00] animate-spin" /></div>}>
       <PaymentResultPageInner />
     </Suspense>
   );

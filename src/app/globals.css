@@ -3,20 +3,39 @@
 @tailwind utilities;
 
 :root {
-  --background: #0F0529;
-  --foreground: #F5F3FA;
+  --background: #0B0B0D;
+  --foreground: #F4F4F0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: #F5F3FA;
-  background-color: #0F0529;
+  color: #F4F4F0;
+  background-color: #0B0B0D;
   font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: "ss01", "cv11";
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Editorial serif display faces */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: -0.02em;
 }
 
 ::selection {
   background-color: #CCFF00;
-  color: #0F0529;
+  color: #0B0B0D;
+}
+
+*:focus-visible {
+  outline: 2px solid #CCFF00;
+  outline-offset: 2px;
 }
 
 /* Custom sleek scrollbar */
@@ -26,15 +45,27 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0F0529;
+  background: #0B0B0D;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2E1566;
+  background: #26262C;
   border-radius: 9999px;
-  border: 2px solid #0F0529;
+  border: 2px solid #0B0B0D;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6A0DAD;
+  background: #3A3A42;
+}
+
+@layer utilities {
+  /* Subtle editorial grid texture */
+  .bg-grid-faint {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
 }

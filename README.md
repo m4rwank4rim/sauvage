@@ -1,11 +1,11 @@
-# Vortex Creative Studio — GTA World Roleplay Design Agency Website
+# SAUVAGE™ — GTA World Roleplay Design Agency Website
 
 A production-quality marketing + client-intake + Fleeca payment platform for an in-character
 graphic design agency operating on the **GTA World Roleplay (GTAW)** server.
 
 Visually modeled after **superpower.com**: big confident headline, generous whitespace, large
-rounded cards, soft violet glows on a deep dark background, scroll-triggered animations, sticky
-pill nav, bold stat callouts, and horizontally-scrolling testimonials.
+rounded cards, soft glows on a deep near-black background, scroll-triggered animations, sticky
+nav, bold stat callouts, and horizontally-scrolling testimonials.
 
 ---
 
@@ -121,7 +121,7 @@ npm start
 All editable copy lives in one file: [`src/config/siteConfig.ts`](./src/config/siteConfig.ts)
 
 ```ts
-agencyName: "Vortex Creative",  // ← Change this
+agencyName: "SAUVAGE™",  // ← Change this
 stats: [ ... ],                 // ← Edit statistics
 services: [ ... ],              // ← Edit pricing tiers and features
 faqs: [ ... ],                  // ← Edit FAQ questions/answers

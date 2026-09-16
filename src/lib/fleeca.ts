@@ -67,7 +67,7 @@ export class FleecaClient {
       return {
         success: true,
         data: {
-          account_name: "Vortex Creative Studios LLC",
+          account_name: "SAUVAGE Creative Studios LLC",
           routing_number: "020084912",
           balance: 842500,
         },

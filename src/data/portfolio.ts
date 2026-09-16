@@ -26,7 +26,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
       "Opulent double-sided cocktail menu featuring neon cyan accents on matte obsidian cardstock. Custom iconography for signature drinks, bottle service tiers, and in-game pricing formatted for seamless forum viewing.",
     tags: ["Menu", "Print", "Nightlife", "Typography"],
     featured: true,
-    colorAccent: "#6A0DAD",
+    colorAccent: "#2E2E36",
     previewType: "menu",
   },
   {
@@ -54,7 +54,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
       "Friendly yet artisan visual refresh for Bean Machine's Legion Square flagship. Complete with vintage cup stamp badges, takeaway sleeve designs, chalkboard menu vectors, and clean minimalist signage.",
     tags: ["Hospitality", "Logo", "Packaging", "Artisan"],
     featured: true,
-    colorAccent: "#6A0DAD",
+    colorAccent: "#2E2E36",
     previewType: "logo",
   },
   {
@@ -82,7 +82,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
       "Broadcast graphics kit including lower thirds, breaking news alert banners, watermarks, and Facebrowser video thumbnail templates for investigative reporters covering city politics and crime.",
     tags: ["Broadcast", "Digital Media", "Overlays", "News"],
     featured: false,
-    colorAccent: "#6A0DAD",
+    colorAccent: "#2E2E36",
     previewType: "digital",
   },
   {

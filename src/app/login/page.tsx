@@ -11,13 +11,13 @@ export default function LoginPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md bg-[#160B36] border border-[#6A0DAD]/40 p-8 rounded-3xl shadow-2xl text-center"
+        className="w-full max-w-md bg-[#141417] border border-white/10 p-8 rounded-3xl shadow-2xl text-center"
       >
-        <div className="w-16 h-16 bg-[#1B0F3D] border border-[#6A0DAD]/40 rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#CCFF00]">
+        <div className="w-16 h-16 bg-[#1B1B20] border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#CCFF00]">
           <Shield className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl font-display font-black text-[#F5F3FA] mb-2">Client Login</h1>
-        <p className="text-sm text-[#B8AFD1] mb-8">
+        <h1 className="text-2xl font-display font-black text-[#F4F4F0] mb-2">Client Login</h1>
+        <p className="text-sm text-[#A8A8AF] mb-8">
           Welcome to {siteConfig.agencyName}. Sign in with your Discord account (linked to your GTAW UCP) to submit briefs and securely access deliverables.
         </p>
 

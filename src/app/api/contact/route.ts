@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         { name: "From", value: name, inline: true },
       ],
       color: 0x5865f2,
-      footer: "Contact Form — Vortex Creative",
+      footer: "Contact Form — SAUVAGE",
     });
 
     return NextResponse.json({ success: true, message: "Message received. We will respond via Discord." });

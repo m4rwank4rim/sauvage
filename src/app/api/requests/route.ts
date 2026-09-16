@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         { name: "Urgency", value: urgency, inline: true },
         { name: "Brief", value: brief.length > 200 ? `${brief.slice(0, 200)}…` : brief, inline: false },
       ],
-      footer: "Vortex Creative Studio",
+      footer: "SAUVAGE Creative Studio",
     });
 
     return NextResponse.json({ success: true, data: newRequest }, { status: 201 });
