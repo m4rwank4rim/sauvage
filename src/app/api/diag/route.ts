@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { kvEnv } from "../../../lib/db/store";
 
+export const dynamic = "force-dynamic";
+
 const mask = (t?: string) => (t ? `${t.slice(0, 6)}...${t.slice(-4)}` : undefined);
 
 export async function GET() {

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { dbStore, kvBackendName, kvEnv } from "../../../lib/db/store";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const requests = await dbStore.getAllRequests();
