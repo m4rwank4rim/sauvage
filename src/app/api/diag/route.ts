@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { kvEnv } from "../../../lib/db/store";
-import { b2Configured, b2Probe } from "../../../lib/b2";
+import { blobConfigured, blobProbe } from "../../../lib/blob";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +9,7 @@ const mask = (t?: string) => (t ? `${t.slice(0, 6)}...${t.slice(-4)}` : undefine
 export async function GET() {
   const env = kvEnv();
   const out: Record<string, unknown> = {
-    b2: await b2Probe(),
+    b2: await blobProbe(),
     envCandidates: {
       UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
       KV_REST_API_URL: process.env.KV_REST_API_URL,

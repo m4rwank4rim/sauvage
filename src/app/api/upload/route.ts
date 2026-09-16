@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
-import { b2Upload, b2Configured } from "../../../lib/b2";
+import { blobUpload, blobConfigured } from "../../../lib/blob";
 
 export const runtime = "nodejs";
 
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     if (!session?.user) {
       return NextResponse.json({ success: false, error: "Sign in to upload files." }, { status: 401 });
     }
-    if (!b2Configured()) {
+    if (!blobConfigured()) {
       return NextResponse.json(
         { success: false, error: "File storage is not configured yet." },
         { status: 503 }
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     const buffer = Buffer.from(base64, "base64");
-    const result = await b2Upload(fileName, buffer, contentType);
+    const result = await blobUpload(fileName, buffer, contentType);
     return NextResponse.json({ success: true, data: result }, { status: 201 });
   } catch (err) {
     console.error("POST /api/upload error:", err);
