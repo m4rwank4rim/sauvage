@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { Redis } from "@upstash/redis";
-import { DesignRequest, PaymentRecord, Review } from "../types";
+import { DesignRequest, PaymentRecord, RequestStatus, Review, ChatMessage } from "../types";
 
 interface DatabaseSchema {
   requests: DesignRequest[];
@@ -180,7 +180,7 @@ export class DatabaseStore {
   }
 
   async createRequest(
-    input: Omit<DesignRequest, "id" | "status" | "createdAt" | "updatedAt">
+    input: Omit<DesignRequest, "id" | "status" | "createdAt" | "updatedAt"> & { status?: RequestStatus }
   ): Promise<DesignRequest> {
     const id = `REQ-${Math.floor(1000 + Math.random() * 9000)}`;
     const now = new Date().toISOString();
@@ -188,7 +188,7 @@ export class DatabaseStore {
     const newReq: DesignRequest = {
       ...input,
       id,
-      status: "pending_quote",
+      status: input.status ?? "pending_quote",
       createdAt: now,
       updatedAt: now,
     };
@@ -223,6 +223,34 @@ export class DatabaseStore {
     data.requests[index] = updated;
     this.fsSave(data);
     return updated;
+  }
+
+  async appendMessage(
+    requestId: string,
+    message: Omit<ChatMessage, "id" | "createdAt">
+  ): Promise<ChatMessage | null> {
+    const full: ChatMessage = {
+      ...message,
+      id: `MSG-${Math.random().toString(36).slice(2, 10)}`,
+      createdAt: new Date().toISOString(),
+    };
+
+    if (kvBackendActive()) {
+      const existing = await this.getRequestById(requestId);
+      if (!existing) return null;
+      const messages = existing.messages ?? [];
+      await this.kv().set(this.reqKey(requestId), JSON.stringify({ ...existing, messages: [...messages, full] }));
+      return full;
+    }
+
+    const data = this.fsLoad();
+    const index = data.requests.findIndex((r) => r.id === requestId);
+    if (index === -1) return null;
+    const rec = data.requests[index];
+    rec.messages = [...(rec.messages ?? []), full];
+    rec.updatedAt = new Date().toISOString();
+    this.fsSave(data);
+    return full;
   }
 
   // --- Payments ---

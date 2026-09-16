@@ -54,27 +54,27 @@ export const siteConfig: SiteConfig = {
   howItWorks: [
     {
       step: "01",
-      title: "Submit a request",
+      title: "Pick a package & brief it",
       description:
-        "Tell us about your business concept, faction lore, target aesthetic, and deliverable specs through our intake portal.",
+        "Choose a pricing tier or set your own budget, then tell us your business concept, faction lore, and deliverables through our intake portal.",
     },
     {
       step: "02",
-      title: "Receive your quote",
+      title: "Pay a 50% deposit, instantly",
       description:
-        "Our art directors review your brief and issue an itemized estimate in in-game dollars ($) within 12 hours.",
+        "Confirm with a single click and pay your 50% deposit through the Fleeca Bank gateway. For custom briefs, we issue a quote within 12 hours.",
     },
     {
       step: "03",
-      title: "Pay securely via Fleeca",
+      title: "Work together in your project room",
       description:
-        "Authorize the deposit through the official Fleeca Bank online gateway using your in-character routing and account.",
+        "Your private project room opens immediately — chat with your designer, upload reference images, and track every revision until it's right.",
     },
     {
       step: "04",
-      title: "Receive high-res files",
+      title: "Accept, pay the balance & download",
       description:
-        "Download your print-ready PNG, vector SVG, vehicle texture `.ytd` guides, and BBCode forum markup directly.",
+        "When you're happy, accept the order to release the remaining 50%, download your print-ready files, and leave a review.",
     },
   ],
   services: [
@@ -130,7 +130,12 @@ export const siteConfig: SiteConfig = {
     {
       question: "How does payment work with Fleeca Bank?",
       answer:
-        "Once our creative directors review your design request and submit a quote, your project page updates with an itemized total. Clicking 'Pay with Fleeca' redirects you to the official Fleeca Bank Gateway (GTA World's in-character banking system). You authorize the payment using your character's routing number, and our system confirms it instantly via encrypted webhook.",
+        "For in-stock packages, you pay a 50% deposit instantly at checkout through the Fleeca Bank Gateway (GTA World's in-character banking system) using your character's routing number. Our system confirms it via encrypted webhook and opens your project room. The remaining 50% is only charged when you accept the finished work. Custom briefs receive a quote first, then require a deposit to start.",
+    },
+    {
+      question: "Is this a real deposit — am I locked in?",
+      answer:
+        "The 50% deposit simply reserves your slot and confirms the artwork direction; it goes against your final total. You review the actual results in your project room before paying the other half — you only pay the balance when you accept the order.",
     },
     {
       question: "Are these real US Dollars or GTA World in-game currency?",
@@ -145,7 +150,7 @@ export const siteConfig: SiteConfig = {
     {
       question: "What happens if I need revisions?",
       answer:
-        "Every design project includes 2 to 3 complimentary revision rounds depending on the tier. We collaborate directly with you via Discord or forum PM to fine-tune colors, fonts, layout, and iconography until it matches your exact vision.",
+        "Every design project includes 2 to 3 complimentary revision rounds depending on the tier. Ask for changes right inside your project room chat, attach reference images, and we'll fine-tune colors, fonts, layout, and iconography until it matches your exact vision.",
     },
     {
       question: "What file formats will I receive?",

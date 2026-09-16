@@ -1,9 +1,12 @@
 export type RequestStatus =
   | "pending_quote"
   | "quoted"
+  | "awaiting_deposit"
   | "paid"
   | "in_progress"
+  | "ready_for_review"
   | "delivered"
+  | "completed"
   | "cancelled";
 
 export type ProjectType =
@@ -21,6 +24,16 @@ export interface Attachment {
   size: number;
   type: string;
   dataUrl?: string; // base64 preview for client-uploaded references
+}
+
+export interface ChatMessage {
+  id: string;
+  authorRole: "client" | "designer" | "system";
+  author: string;
+  content: string;
+  attachmentUrl?: string;
+  attachmentName?: string;
+  createdAt: string;
 }
 
 export interface DesignRequest {
@@ -41,6 +54,17 @@ export interface DesignRequest {
   userId?: string;
   deliverablesUrl?: string;
   deliveryNotes?: string;
+  flow?: "instant" | "manual";
+  packageName?: string;
+  totalAmount?: number;
+  depositAmount?: number;
+  balanceAmount?: number;
+  depositPaymentId?: string;
+  depositPaymentLink?: string;
+  balancePaymentId?: string;
+  balancePaymentLink?: string;
+  messages?: ChatMessage[];
+  acceptedAt?: string;
   createdAt: string;
   updatedAt: string;
 }

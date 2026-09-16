@@ -54,6 +54,25 @@ export async function POST(req: NextRequest) {
     );
 
     if (status === "payment_successful" && request) {
+      if (request.flow === "instant") {
+        if (payment_id === request.depositPaymentId) {
+          await dbStore.updateRequest(request.id, { status: "in_progress" });
+          await dbStore.appendMessage(request.id, {
+            authorRole: "system",
+            author: "SAUVAGE Design",
+            content: `50% deposit received. Project is now in production — the designer will be in touch here. Remaining balance ($${(request.balanceAmount ?? 0).toLocaleString()}) is due on final acceptance.`,
+          });
+        } else if (payment_id === request.balancePaymentId) {
+          const now = new Date().toISOString();
+          await dbStore.updateRequest(request.id, { status: "completed", acceptedAt: now });
+          await dbStore.appendMessage(request.id, {
+            authorRole: "system",
+            author: "SAUVAGE Design",
+            content: "Balance confirmed — order accepted and marked complete. Thank you for commissioning SAUVAGE.",
+          });
+        }
+      }
+
       console.log(
         `[Fleeca Webhook] ✅ Payment confirmed for request #${request.id} — $${amount} from ${payer_name || "unknown"}.`
       );

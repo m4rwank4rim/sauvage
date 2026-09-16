@@ -14,9 +14,12 @@ import { DesignRequest, PaymentRecord } from "../../lib/types";
 const STATUS_COLORS: Record<string, string> = {
   pending_quote: "bg-amber-400/10 text-amber-300 border-amber-400/30",
   quoted: "bg-blue-400/10 text-blue-300 border-blue-400/30",
+  awaiting_deposit: "bg-blue-400/10 text-blue-300 border-blue-400/30",
   paid: "bg-[#CCFF00]/10 text-[#CCFF00] border-[#CCFF00]/30",
   in_progress: "bg-purple-400/10 text-purple-300 border-purple-400/30",
+  ready_for_review: "bg-amber-400/10 text-amber-300 border-amber-400/30",
   delivered: "bg-green-400/10 text-green-300 border-green-400/30",
+  completed: "bg-green-400/10 text-green-300 border-green-400/30",
   cancelled: "bg-red-400/10 text-red-300 border-red-400/30",
 };
 
@@ -151,7 +154,7 @@ export default function AdminPage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          status: "delivered",
+          status: deliveryReq.flow === "instant" ? "ready_for_review" : "delivered",
           deliverablesUrl,
           deliveryNotes: deliveryNotes || undefined,
         }),
@@ -340,6 +343,16 @@ export default function AdminPage() {
                         >
                           Issue Quote
                         </button>
+                      )}
+                      {req.status === "awaiting_deposit" && req.depositPaymentLink && (
+                        <a
+                          href={req.depositPaymentLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-3 py-1.5 rounded-full text-[10px] font-bold text-blue-900 bg-blue-300 hover:bg-blue-200 transition-colors"
+                        >
+                          Deposit Link
+                        </a>
                       )}
                       {req.status === "paid" && (
                         <button

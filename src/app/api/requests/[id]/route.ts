@@ -11,8 +11,10 @@ export async function GET(
     if (!request) {
       return NextResponse.json({ success: false, error: "Request not found." }, { status: 404 });
     }
-    const payment = await dbStore.getPaymentByRequestId(params.id);
-    return NextResponse.json({ success: true, data: { request, payment } });
+    const allPayments = await dbStore.getAllPayments();
+    const payments = allPayments.filter((p) => p.requestId === params.id);
+    const payment = payments[0] ?? null;
+    return NextResponse.json({ success: true, data: { request, payment, payments } });
   } catch (err) {
     return NextResponse.json({ success: false, error: "Failed to load request." }, { status: 500 });
   }

@@ -7,8 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Upload, CheckCircle2, X, Sparkles, FileEdit } from "lucide-react";
+import { ArrowRight, Upload, CheckCircle2, X, Sparkles, FileEdit, Zap, Landmark } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { siteConfig } from "../../config/siteConfig";
 
 const PROJECT_TYPES = [
   "Logo & Identity",
@@ -25,21 +26,12 @@ const URGENCY_OPTIONS = [
   { value: "rush", label: "Rush (<12h)", description: "Immediate attention — premium rate" },
 ] as const;
 
-const BUDGET_RANGES = [
-  "Under $10,000",
-  "$10,000 – $20,000",
-  "$20,000 – $40,000",
-  "$40,000 – $80,000",
-  "$80,000+",
-  "Request a Quote",
-] as const;
-
 const requestSchema = z.object({
   clientName: z.string().min(2, "Please provide your full in-character name."),
   discordTag: z.string().min(3, "Discord handle is required for correspondence."),
   businessName: z.string().optional(),
   projectType: z.enum(PROJECT_TYPES, { errorMap: () => ({ message: "Please select a project type." }) }),
-  budgetRange: z.string().min(1, "Please indicate your budget range."),
+  budgetRange: z.string().optional(),
   urgency: z.enum(["standard", "priority", "rush"]),
   brief: z
     .string()
@@ -57,6 +49,7 @@ function RequestPageInner() {
   const { data: session, status } = useSession();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [attachments, setAttachments] = React.useState<File[]>([]);
+  const [formError, setFormError] = React.useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Pre-fill service / category from URL params (from pricing CTAs)
@@ -77,6 +70,17 @@ function RequestPageInner() {
     "Logo & Identity"
   ) as (typeof PROJECT_TYPES)[number];
 
+  const services = siteConfig.services as { id: string; name: string; category: string; price: number; tagline: string; deliveryTime: string; features: string[] }[];
+  const [selectedServiceId, setSelectedServiceId] = React.useState(() =>
+    prefilledService && prefilledService !== "custom" ? prefilledService : ""
+  );
+  const [customBudget, setCustomBudget] = React.useState("");
+
+  const selectedService = services.find((s) => s.id === selectedServiceId);
+  const customBudgetValue = parseInt(customBudget.replace(/[^0-9]/g, ""), 10);
+  const total = selectedService?.price ?? (Number.isFinite(customBudgetValue) && customBudgetValue >= 1000 ? customBudgetValue : null);
+  const deposit = total ? Math.round(total / 2) : null;
+
   const {
     register,
     handleSubmit,
@@ -90,7 +94,6 @@ function RequestPageInner() {
       discordTag: session?.user?.name || "",
       projectType: PROJECT_TYPES.includes(defaultType as any) ? defaultType : "Logo & Identity",
       urgency: "standard",
-      budgetRange: "Request a Quote",
     },
   });
 
@@ -104,7 +107,6 @@ function RequestPageInner() {
         discordTag: session.user.name,
         projectType: PROJECT_TYPES.includes(defaultType as any) ? defaultType : "Logo & Identity",
         urgency: "standard",
-        budgetRange: "Request a Quote",
       });
     }
   }, [status, session, reset, defaultType]);
@@ -130,7 +132,12 @@ function RequestPageInner() {
   };
 
   const onSubmit = async (data: RequestFormValues) => {
+    if (!selectedServiceId && !deposit) {
+      setFormError("Choose a package or enter a budget so we can charge your 50% deposit instantly.");
+      return;
+    }
     setIsSubmitting(true);
+    setFormError("");
 
     try {
       const res = await fetch("/api/requests", {
@@ -138,6 +145,9 @@ function RequestPageInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
+          budgetRange: selectedService ? `$${selectedService.price.toLocaleString()} — ${selectedService.name}` : deposit ? `$${total!.toLocaleString()} — Custom project` : "Request a Quote",
+          packageId: selectedServiceId || undefined,
+          customBudget: selectedService ? undefined : (total ?? undefined),
           userId: (session?.user as any)?.id,
           attachments: attachments.map((f) => ({ name: f.name, size: f.size, type: f.type })),
         }),
@@ -145,13 +155,17 @@ function RequestPageInner() {
 
       const json = await res.json();
       if (json.success && json.data?.id) {
-        router.push(`/request/${json.data.id}`);
+        if (json.payment?.payment_link) {
+          window.location.href = json.payment.payment_link;
+        } else {
+          router.push(`/request/${json.data.id}`);
+        }
       } else {
-        alert(json.error || "Submission failed. Please try again.");
+        setFormError(json.error || "Submission failed. Please try again.");
         setIsSubmitting(false);
       }
     } catch {
-      alert("Network error. Please try again.");
+      setFormError("Network error. Please try again.");
       setIsSubmitting(false);
     }
   };
@@ -168,8 +182,8 @@ function RequestPageInner() {
             Start your design brief.
           </h1>
           <p className="text-sm text-[#A8A8AF] leading-relaxed max-w-lg mx-auto">
-            Fill out the form below. Once we review your brief, we will issue a quote within 12
-            hours and create a Fleeca Bank payment link for you.
+            Pick a package or set your budget, pay your <strong className="text-[#CCFF00]">50% deposit instantly via Fleeca</strong>,
+            and your project room opens right away — chat with the designer, share files, and approve the finished work in one place.
           </p>
         </div>
 
@@ -230,10 +244,99 @@ function RequestPageInner() {
             </div>
           </div>
 
-          {/* Project Specifics */}
+          {/* Pricing & Deposit */}
           <div className="rounded-2xl bg-[#141417] border border-white/[0.08] p-6 space-y-5">
             <h2 className="text-sm font-mono font-bold text-[#CCFF00] uppercase tracking-wider flex items-center gap-2">
               <span className="w-5 h-5 rounded-full border border-[#CCFF00]/40 flex items-center justify-center text-[10px]">2</span>
+              Pricing &amp; Instant Deposit
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {services.map((s) => {
+                const isSelected = selectedServiceId === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedServiceId(s.id);
+                      setCustomBudget("");
+                    }}
+                    className={`text-left cursor-pointer rounded-xl p-4 border transition-all ${
+                      isSelected
+                        ? "bg-[#1B1B20] border-[#CCFF00] shadow-glow-lime"
+                        : "bg-[#0B0B0D] border-white/[0.08] hover:border-white/30"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-bold text-[#F4F4F0]">{s.name}</span>
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#CCFF00]" />}
+                    </div>
+                    <div className="font-display font-black text-lg text-[#CCFF00]">
+                      ${s.price.toLocaleString()}
+                    </div>
+                    <div className="text-[10px] text-[#A8A8AF] mt-1">
+                      Deposit: ${Math.round(s.price / 2).toLocaleString()}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div
+              className={`flex flex-col sm:flex-row sm:items-center gap-4 rounded-xl border p-4 transition-all ${
+                !selectedServiceId ? "border-white/[0.08] bg-[#0B0B0D]" : "border-white/[0.06] bg-[#0B0B0D]/60 opacity-70"
+              }`}
+            >
+              <div className="text-xs font-mono text-[#A8A8AF] uppercase tracking-wider shrink-0">
+                Or custom budget
+              </div>
+              <div className="flex items-center gap-3 flex-1">
+                <span className="text-[#CCFF00] font-display font-black text-lg">$</span>
+                <input
+                  type="number"
+                  min={1000}
+                  value={customBudget}
+                  onChange={(e) => {
+                    setCustomBudget(e.target.value);
+                    if (e.target.value) setSelectedServiceId("");
+                  }}
+                  placeholder="Enter total project budget"
+                  className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] placeholder-[#6B6B72] outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            {deposit ? (
+              <div className="flex items-center gap-3 rounded-xl bg-[#CCFF00]/[0.06] border border-[#CCFF00]/30 p-4">
+                <Landmark className="w-5 h-5 text-[#CCFF00] shrink-0" />
+                <div className="text-xs text-[#A8A8AF]">
+                  <span className="text-[#F4F4F0] font-bold">
+                    ${deposit.toLocaleString()} (50% deposit)
+                  </span>{" "}
+                  due now via Fleeca Bank. Remaining ${(total! - deposit).toLocaleString()} is paid when you accept the finished work.
+                </div>
+              </div>
+            ) : formError ? (
+              <p className="text-xs text-red-400">{formError}</p>
+            ) : (
+              <div className="flex items-center gap-3 rounded-xl bg-[#0B0B0D] border border-white/[0.08] p-4">
+                <Zap className="w-5 h-5 text-[#CCFF00] shrink-0" />
+                <div className="text-xs text-[#A8A8AF]">
+                  Pick a package or enter a budget to generate your instant 50% deposit link.
+                </div>
+              </div>
+            )}
+
+            <p className="text-[10px] text-[#6B6B72] font-mono">
+              No real-world payments — all prices are GTA World in-character currency ($).
+            </p>
+          </div>
+
+          {/* Project Specifics */}
+          <div className="rounded-2xl bg-[#141417] border border-white/[0.08] p-6 space-y-5">
+            <h2 className="text-sm font-mono font-bold text-[#CCFF00] uppercase tracking-wider flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full border border-[#CCFF00]/40 flex items-center justify-center text-[10px]">3</span>
               Project Details
             </h2>
 
@@ -285,28 +388,12 @@ function RequestPageInner() {
                 })}
               </div>
             </div>
-
-            <div>
-              <label className="text-xs font-mono text-[#A8A8AF] mb-1.5 block uppercase tracking-wider">
-                Budget Range *
-              </label>
-              <select
-                {...register("budgetRange")}
-                className="w-full bg-[#0B0B0D] border border-white/10 focus:border-[#CCFF00] rounded-xl px-4 py-3 text-sm text-[#F4F4F0] outline-none transition-colors appearance-none"
-              >
-                {BUDGET_RANGES.map((b) => (
-                  <option key={b} value={b}>
-                    {b}
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
 
           {/* Creative Brief */}
           <div className="rounded-2xl bg-[#141417] border border-white/[0.08] p-6 space-y-4">
             <h2 className="text-sm font-mono font-bold text-[#CCFF00] uppercase tracking-wider flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full border border-[#CCFF00]/40 flex items-center justify-center text-[10px]">3</span>
+              <span className="w-5 h-5 rounded-full border border-[#CCFF00]/40 flex items-center justify-center text-[10px]">4</span>
               Creative Brief
             </h2>
 
