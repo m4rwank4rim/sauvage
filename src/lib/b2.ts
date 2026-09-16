@@ -34,7 +34,10 @@ async function authorize() {
     if (!list.ok) throw new Error(`B2 list_buckets failed (${list.status})`);
     const buckets = await list.json();
     const match = buckets.buckets?.find((b: any) => b.bucketName === BUCKET);
-    if (!match) throw new Error(`B2 bucket "${BUCKET}" not found`);
+    if (!match) {
+      const names = (buckets.buckets ?? []).map((b: any) => b.bucketName).join(", ") || "none";
+      throw new Error(`B2 bucket "${BUCKET}" not found (available: ${names})`);
+    }
     bucketId = match.bucketId;
     bucketName = match.bucketName;
   }
