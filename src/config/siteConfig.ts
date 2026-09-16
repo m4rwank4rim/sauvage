@@ -19,6 +19,7 @@ export interface SiteConfig {
     platform: string;
     operatingHours: string;
     inGameLocation: string;
+    hotline: string;
     discordUrl: string;
     supportEmail: string;
   };
@@ -45,7 +46,8 @@ export const siteConfig: SiteConfig = {
     server: "GTA World Roleplay (GTAW)",
     platform: "RAGE:MP",
     operatingHours: "Monday - Sunday: 12:00 PM – 02:00 AM LS Time",
-    inGameLocation: "Del Perro Plaza Suite 402, Los Santos, San Andreas",
+    inGameLocation: "Badger Tower Office Complex - Floor 2, Room 3",
+    hotline: "19003308",
     discordUrl: "https://discord.gg/gtaworld",
     supportEmail: "contact@sauvagecreative.ls",
   },

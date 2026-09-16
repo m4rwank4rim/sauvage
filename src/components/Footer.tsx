@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   ShieldAlert,
   Landmark,
+  Phone,
 } from "lucide-react";
 import { siteConfig } from "../config/siteConfig";
 
@@ -106,7 +107,11 @@ export const Footer: React.FC = () => {
               <p className="text-text-muted">{siteConfig.serverInfo.operatingHours}</p>
               <p className="flex items-center gap-1.5 text-electric-lime font-mono">
                 <Landmark className="w-3.5 h-3.5" />
-                Routing: 020084912
+                Routing: 030139330
+              </p>
+              <p className="flex items-center gap-1.5 text-electric-lime font-mono">
+                <Phone className="w-3.5 h-3.5" />
+                Hotline: {siteConfig.serverInfo.hotline}
               </p>
               <p className="text-text-muted">RAGE:MP GTA World</p>
             </div>

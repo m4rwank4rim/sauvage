@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { siteConfig } from "../../config/siteConfig";
 import {
-  MessageSquare, Mail, MapPin, Clock, ArrowRight, CheckCircle2, Send
+  MessageSquare, Mail, MapPin, Clock, Phone, ArrowRight, CheckCircle2, Send
 } from "lucide-react";
 
 const contactSchema = z.object({
@@ -97,6 +97,16 @@ export default function ContactPage() {
                 <div>
                   <div className="text-xs font-mono font-bold text-[#F4F4F0] mb-0.5">Operating Hours</div>
                   <div className="text-xs text-[#A8A8AF]">{siteConfig.serverInfo.operatingHours}</div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#0B0B0D] border border-white/10 flex items-center justify-center text-[#CCFF00] flex-shrink-0">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-mono font-bold text-[#F4F4F0] mb-0.5">IC Hotline</div>
+                  <div className="text-xs text-[#CCFF00]">{siteConfig.serverInfo.hotline}</div>
                 </div>
               </div>
 

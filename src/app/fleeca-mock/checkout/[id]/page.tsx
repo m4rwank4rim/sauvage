@@ -165,7 +165,7 @@ function FleecaMockCheckoutPageInner() {
               <div className="bg-gradient-to-r from-[#17171B] to-[#101014] p-6 border-b border-white/[0.08]">
                 <div className="text-xs font-mono text-[#A8A8AF] mb-1">OUTGOING TRANSFER TO</div>
                 <div className="font-display font-black text-lg text-[#F4F4F0]">SAUVAGE™ Creative Studio</div>
-                <div className="text-xs text-[#A8A8AF] mt-0.5 font-mono">Routing: 020 084 912</div>
+                <div className="text-xs text-[#A8A8AF] mt-0.5 font-mono">Routing: 030 139 330</div>
                 <div className="mt-4 flex items-baseline gap-2">
                   <span className="text-xs text-[#A8A8AF]">Amount</span>
                   <span className="font-display font-black text-3xl text-[#CCFF00] font-mono">

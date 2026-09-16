@@ -68,7 +68,7 @@ export class FleecaClient {
         success: true,
         data: {
           account_name: "SAUVAGE Creative Studios LLC",
-          routing_number: "020084912",
+          routing_number: "030139330",
           balance: 842500,
         },
       };
