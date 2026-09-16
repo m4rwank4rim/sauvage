@@ -121,7 +121,7 @@ export class FleecaClient {
     // If sandbox demo key, return instant simulated gateway session
     if (this.isSandboxDemoKey()) {
       const simPaymentId = `flc_sim_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+      const siteUrl = process.env.SITE_URL || "http://localhost:3000";
       const paymentLink = `${siteUrl}/fleeca-mock/checkout/${simPaymentId}?amount=${amount}&desc=${encodeURIComponent(
         sanitizedDescription
       )}${requestId ? `&req=${requestId}` : ""}`;
@@ -182,7 +182,7 @@ export class FleecaClient {
       // In case the live API server cannot be reached during local dev, fallback gracefully to simulation
       console.warn("Real Fleeca API call failed, generating fallback sandbox link:", err);
       const fallbackId = `flc_dev_${Date.now()}_${crypto.randomBytes(3).toString("hex")}`;
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+      const siteUrl = process.env.SITE_URL || "http://localhost:3000";
       return {
         success: true,
         payment_id: fallbackId,

@@ -28,7 +28,7 @@ export default function AdminPage() {
   const [requests, setRequests] = useState<DesignRequest[]>([]);
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
   const [loading, setLoading] = useState(false);
-  const [balance, setBalance] = useState<{ account_name: string; balance: number } | null>(null);
+  const [balance, setBalance] = useState<{ account_name: string; balance: number; mode?: number } | null>(null);
 
   // Quote modal state
   const [quotingReq, setQuotingReq] = useState<DesignRequest | null>(null);
@@ -278,7 +278,7 @@ export default function AdminPage() {
           </div>
           <div className="flex items-center gap-2 text-xs text-[#CCFF00] font-mono bg-[#0F0529] px-4 py-2 rounded-full border border-[#6A0DAD]/30">
             <span className="w-2 h-2 rounded-full bg-[#CCFF00] animate-ping" />
-            <span>{process.env.NEXT_PUBLIC_SITE_URL?.includes("localhost") ? "SANDBOX MODE" : "LIVE MODE"}</span>
+            <span>{balance.mode === 1 ? "LIVE MODE" : "SANDBOX MODE"}</span>
           </div>
         </div>
       )}

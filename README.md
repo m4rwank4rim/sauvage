@@ -46,11 +46,24 @@ FLEECA_BASE_URL=https://banking.gta.world
 FLEECA_REDIRECT_URL=http://localhost:3000/payment/result
 FLEECA_CALLBACK_URL=http://localhost:3000/api/webhooks/fleeca
 
-# Public Site URL
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+# Site URL (server-side only — used to build Fleeca redirect/payment links)
+SITE_URL=http://localhost:3000
 
-# Admin Passcode (TODO: replace with proper auth before production)
-ADMIN_ACCESS_PASSCODE=fleeca2026
+# NextAuth.js (Discord OAuth) — required for admin + client portals
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=generate_a_random_secret_here
+DISCORD_CLIENT_ID=your_discord_application_client_id
+DISCORD_CLIENT_SECRET=your_discord_application_client_secret
+
+# Comma-separated Discord user IDs allowed to access /admin
+ADMIN_DISCORD_IDS=
+
+# Discord webhook URL for payment/contact/request notifications
+DISCORD_WEBHOOK_URL=
+
+# Upstash Redis (Vercel KV) — REQUIRED on Vercel, optional locally
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
 ```
 
 ### 3. Run the development server

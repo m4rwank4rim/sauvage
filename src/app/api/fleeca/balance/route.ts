@@ -11,7 +11,10 @@ export async function GET() {
     if (!result.success) {
       return NextResponse.json({ success: false, error: result.error }, { status: 502 });
     }
-    return NextResponse.json({ success: true, data: result.data });
+    return NextResponse.json({
+      success: true,
+      data: { ...result.data, mode: process.env.FLEECA_MODE === "1" ? 1 : 0 },
+    });
   } catch (err) {
     return NextResponse.json({ success: false, error: "Balance check failed." }, { status: 500 });
   }
