@@ -6,7 +6,7 @@ const BUCKET = process.env.B2_BUCKET || "";
 const PUBLIC_BASE = (process.env.B2_PUBLIC_BASE_URL || "").replace(/\/+$/, "");
 const MAX_UPLOAD = 4 * 1024 * 1024;
 
-let cachedAuth: { apiUrl: string; authToken: string; accountId: string; bucketId: string } | null = null;
+let cachedAuth: { apiUrl: string; authToken: string; accountId: string; bucketId: string; bucketName: string } | null = null;
 let cacheExpiry = 0;
 
 async function authorize() {
@@ -23,6 +23,7 @@ async function authorize() {
   const allowedBucket = data.allowed?.bucketId;
   let bucketId = allowedBucket;
   let bucketName = data.allowed?.bucketName || BUCKET;
+  let bucketNameMatch = bucketName;
 
   if (!bucketId || bucketName !== BUCKET) {
     const list = await fetch(`${data.apiUrl}/b2api/v2/b2_list_buckets`, {
@@ -38,7 +39,7 @@ async function authorize() {
     bucketName = match.bucketName;
   }
 
-  cachedAuth = { apiUrl: data.apiUrl, authToken: data.authorizationToken, accountId: data.accountId, bucketId };
+  cachedAuth = { apiUrl: data.apiUrl, authToken: data.authorizationToken, accountId: data.accountId, bucketId, bucketName };
   cacheExpiry = now + 9 * 60 * 1000;
   return cachedAuth;
 }
@@ -69,10 +70,7 @@ export async function b2Upload(fileName: string, buffer: Buffer, contentType: st
     },
     body: buffer as unknown as BodyInit,
   });
-  if (!upRes.ok) {
-    const err = await upRes.text().catch(() => "");
-    throw new Error(`B2 upload failed (${upRes.status}): ${err}`);
-  }
+  if (!upRes.ok) throw new Error(`B2 upload failed (${upRes.status})`);
   const out = await upRes.json();
   const publicUrl = PUBLIC_BASE ? `${PUBLIC_BASE}/${encodeURIComponent(out.fileName)}` : `/api/files/${encodeURIComponent(out.fileName)}`;
   return { url: publicUrl, fileName: out.fileName };
@@ -101,4 +99,42 @@ export async function b2ProxyDownload(fileName: string): Promise<Response> {
 
 export function b2Configured(): boolean {
   return Boolean(KEY_ID && APP_KEY && BUCKET);
+}
+
+export type B2ProbeResult = {
+  configured: boolean;
+  keyIdLen?: number;
+  bucket?: string | null;
+  publicBase?: boolean;
+  authorized?: boolean;
+  buckets?: { name: string; type: string }[];
+  error?: string;
+};
+
+export async function b2Probe(): Promise<B2ProbeResult> {
+  const out: B2ProbeResult = {
+    configured: b2Configured(),
+    keyIdLen: KEY_ID.length || 0,
+    bucket: BUCKET || null,
+    publicBase: Boolean(PUBLIC_BASE),
+  };
+  if (!b2Configured()) return out;
+  try {
+    const auth = await authorize();
+    const list = await fetch(`${auth.apiUrl}/b2api/v2/b2_list_buckets`, {
+      method: "POST",
+      headers: { Authorization: auth.authToken, "Content-Type": "application/json" },
+      body: JSON.stringify({ accountId: auth.accountId }),
+    });
+    if (!list.ok) throw new Error(`B2 list_buckets failed (${list.status})`);
+    const lb = await list.json();
+    out.authorized = true;
+    out.buckets = (lb.buckets ?? []).map((b: { bucketName: string; bucketType: string }) => ({
+      name: b.bucketName,
+      type: b.bucketType,
+    }));
+  } catch (err) {
+    out.error = err instanceof Error ? err.message.slice(0, 200) : String(err);
+  }
+  return out;
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { kvEnv } from "../../../lib/db/store";
+import { b2Configured, b2Probe } from "../../../lib/b2";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +9,7 @@ const mask = (t?: string) => (t ? `${t.slice(0, 6)}...${t.slice(-4)}` : undefine
 export async function GET() {
   const env = kvEnv();
   const out: Record<string, unknown> = {
+    b2: await b2Probe(),
     envCandidates: {
       UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
       KV_REST_API_URL: process.env.KV_REST_API_URL,
@@ -45,13 +47,12 @@ export async function GET() {
     }
     out.sdk = {
       init: sdkInit,
-      sdkReqList: sdkReqs,
-      sdkReqCount: sdkReqs?.length ?? null,
-      sdkPayList: sdkPays,
-      sdkPayCount: sdkPays?.length ?? null,
+      reqList: sdkReqs,
+      reqCount: sdkReqs?.length ?? null,
+      payList: sdkPays,
+      payCount: sdkPays?.length ?? null,
       itemProbe: {
         raw: sdkItemRaw ? sdkItemRaw.slice(0, 80) : null,
-        rawType: typeof sdkItemRaw,
         parsed: sdkItem,
         parseError: sdkItemParseErr,
       },
