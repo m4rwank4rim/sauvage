@@ -33,12 +33,28 @@ export async function GET() {
       r.lrange<string>("agency:reqs", 0, -1),
       r.lrange<string>("agency:pays", 0, -1),
     ]);
+    const sdkItemRaw = await r.get<string>("agency:req:REQ-8967");
+    let sdkItem = null;
+    let sdkItemParseErr = null;
+    if (sdkItemRaw) {
+      try {
+        sdkItem = { status: (JSON.parse(sdkItemRaw) as { status?: string }).status?.slice(0, 30) ?? null };
+      } catch (e) {
+        sdkItemParseErr = String(e);
+      }
+    }
     out.sdk = {
       init: sdkInit,
       sdkReqList: sdkReqs,
       sdkReqCount: sdkReqs?.length ?? null,
       sdkPayList: sdkPays,
       sdkPayCount: sdkPays?.length ?? null,
+      itemProbe: {
+        raw: sdkItemRaw ? sdkItemRaw.slice(0, 80) : null,
+        rawType: typeof sdkItemRaw,
+        parsed: sdkItem,
+        parseError: sdkItemParseErr,
+      },
     };
   } catch (err) {
     out.sdk = { error: String(err) };
@@ -46,10 +62,11 @@ export async function GET() {
 
   try {
     const headers = { Authorization: `Bearer ${env.token}` };
-    const [init, reqs, pays] = await Promise.all([
+    const [init, reqs, pays, itemProbe] = await Promise.all([
       fetch(`${env.url}/get/agency:init`, { headers }).then((x) => x.json()),
       fetch(`${env.url}/lrange/agency:reqs/0/-1`, { headers }).then((x) => x.json()),
       fetch(`${env.url}/lrange/agency:pays/0/-1`, { headers }).then((x) => x.json()),
+      fetch(`${env.url}/get/agency:req:REQ-8967`, { headers }).then((x) => x.json()),
     ]);
     out.rawFetch = {
       init,
@@ -57,6 +74,10 @@ export async function GET() {
       reqCount: Array.isArray(reqs?.result) ? reqs.result.length : reqs,
       pays,
       payCount: Array.isArray(pays?.result) ? pays.result.length : pays,
+      itemProbe: {
+        result: typeof itemProbe?.result === "string" ? itemProbe.result.slice(0, 80) : itemProbe?.result,
+        error: itemProbe?.error ?? null,
+      },
     };
   } catch (err) {
     out.rawFetch = { error: String(err) };
