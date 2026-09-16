@@ -95,6 +95,17 @@ const kvBackendActive = (): boolean => {
   return Boolean(env.url && env.token);
 };
 
+export const kvBackendName = (): string => {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) return "upstash";
+  if (
+    (process.env.KV_REST_API_URL || process.env.REDIS_REST_API_URL) &&
+    (process.env.KV_REST_API_TOKEN || process.env.REDIS_REST_API_TOKEN)
+  ) {
+    return "vercel-kv";
+  }
+  return "local-fs";
+};
+
 export class DatabaseStore {
   private kv = (): Redis => {
     const env = kvEnv();
