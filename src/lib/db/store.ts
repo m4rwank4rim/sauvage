@@ -10,7 +10,11 @@ interface DatabaseSchema {
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const DB_FILE = path.join(DATA_DIR, "agency.json");
-const KV_KEY = "agency:db";
+
+const LEGACY_KEY = "agency:db";
+const K_REQ_LIST = "agency:reqs";
+const K_PAY_LIST = "agency:pays";
+const K_INIT = "agency:init";
 
 const SEED_REQUESTS: DesignRequest[] = [
   {
@@ -113,29 +117,77 @@ export class DatabaseStore {
     return new Redis({ url: env.url as string, token: env.token as string });
   };
 
-  private async load(): Promise<DatabaseSchema> {
-    if (kvBackendActive()) {
-      const raw = await this.kv().get<string>(KV_KEY);
-      if (raw) {
-        try {
-          return JSON.parse(raw) as DatabaseSchema;
-        } catch {
-          console.error("Failed to parse KV store, reseeding.");
-        }
+  private reqKey = (id: string): string => `agency:req:${id}`;
+  private payKey = (id: string): string => `agency:pay:${id}`;
+
+  private async ensureSeeded(): Promise<void> {
+    if ((await this.kv().setnx(K_INIT, "1")) !== 1) return;
+
+    let requests = SEED_REQUESTS;
+    let payments = SEED_PAYMENTS;
+    try {
+      const legacy = await this.kv().get<string>(LEGACY_KEY);
+      if (legacy) {
+        const data = JSON.parse(legacy) as DatabaseSchema;
+        requests = data.requests && data.requests.length ? data.requests : SEED_REQUESTS;
+        payments = data.payments && data.payments.length ? data.payments : SEED_PAYMENTS;
       }
-      const seeded: DatabaseSchema = { requests: SEED_REQUESTS, payments: SEED_PAYMENTS };
-      await this.kv().setnx(KV_KEY, JSON.stringify(seeded));
-      const next = await this.kv().get<string>(KV_KEY);
-      if (next) {
-        try {
-          return JSON.parse(next) as DatabaseSchema;
-        } catch {
-          return seeded;
-        }
-      }
-      return seeded;
+    } catch {
+      console.error("Failed to migrate legacy KV doc, using seeds.");
     }
 
+    for (const req of requests) {
+      await this.kv().set(this.reqKey(req.id), JSON.stringify(req));
+      await this.kv().lpush(K_REQ_LIST, req.id);
+    }
+    for (const pay of payments) {
+      await this.kv().set(this.payKey(pay.paymentId), JSON.stringify(pay));
+      await this.kv().lpush(K_PAY_LIST, pay.paymentId);
+    }
+    await this.kv().del(LEGACY_KEY);
+  }
+
+  private async kvLoadRequests(): Promise<DesignRequest[]> {
+    await this.ensureSeeded();
+    const ids = await this.kv().lrange<string>(K_REQ_LIST, 0, -1);
+    if (!ids) return [];
+    const seen = new Set<string>();
+    const out: DesignRequest[] = [];
+    for (const id of ids) {
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const raw = await this.kv().get<string>(this.reqKey(id));
+      if (!raw) continue;
+      try {
+        out.push(JSON.parse(raw) as DesignRequest);
+      } catch {
+        /* skip corrupt item */
+      }
+    }
+    return out;
+  }
+
+  private async kvLoadPayments(): Promise<PaymentRecord[]> {
+    await this.ensureSeeded();
+    const ids = await this.kv().lrange<string>(K_PAY_LIST, 0, -1);
+    if (!ids) return [];
+    const seen = new Set<string>();
+    const out: PaymentRecord[] = [];
+    for (const id of ids) {
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const raw = await this.kv().get<string>(this.payKey(id));
+      if (!raw) continue;
+      try {
+        out.push(JSON.parse(raw) as PaymentRecord);
+      } catch {
+        /* skip corrupt item */
+      }
+    }
+    return out;
+  }
+
+  private fsLoad(): DatabaseSchema {
     try {
       if (!fs.existsSync(DATA_DIR)) {
         fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -156,12 +208,7 @@ export class DatabaseStore {
     }
   }
 
-  private async save(data: DatabaseSchema): Promise<void> {
-    if (kvBackendActive()) {
-      await this.kv().set(KV_KEY, JSON.stringify(data));
-      return;
-    }
-
+  private fsSave(data: DatabaseSchema): void {
     try {
       if (!fs.existsSync(DATA_DIR)) {
         fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -174,21 +221,33 @@ export class DatabaseStore {
 
   // --- Requests ---
   async getAllRequests(): Promise<DesignRequest[]> {
-    const data = await this.load();
-    return data.requests.sort(
+    if (kvBackendActive()) {
+      return (await this.kvLoadRequests()).sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    }
+    return this.fsLoad().requests.sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
 
   async getRequestById(id: string): Promise<DesignRequest | null> {
-    const data = await this.load();
-    return data.requests.find((r) => r.id === id) || null;
+    if (kvBackendActive()) {
+      await this.ensureSeeded();
+      const raw = await this.kv().get<string>(this.reqKey(id));
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw) as DesignRequest;
+      } catch {
+        return null;
+      }
+    }
+    return this.fsLoad().requests.find((r) => r.id === id) || null;
   }
 
   async createRequest(
     input: Omit<DesignRequest, "id" | "status" | "createdAt" | "updatedAt">
   ): Promise<DesignRequest> {
-    const data = await this.load();
     const id = `REQ-${Math.floor(1000 + Math.random() * 9000)}`;
     const now = new Date().toISOString();
 
@@ -200,54 +259,85 @@ export class DatabaseStore {
       updatedAt: now,
     };
 
+    if (kvBackendActive()) {
+      await this.ensureSeeded();
+      await this.kv().set(this.reqKey(id), JSON.stringify(newReq));
+      await this.kv().lpush(K_REQ_LIST, id);
+      return newReq;
+    }
+
+    const data = this.fsLoad();
     data.requests.unshift(newReq);
-    await this.save(data);
+    this.fsSave(data);
     return newReq;
   }
 
   async updateRequest(id: string, updates: Partial<DesignRequest>): Promise<DesignRequest | null> {
-    const data = await this.load();
+    if (kvBackendActive()) {
+      const existing = await this.getRequestById(id);
+      if (!existing) return null;
+      const updated = { ...existing, ...updates, updatedAt: new Date().toISOString() };
+      await this.kv().set(this.reqKey(id), JSON.stringify(updated));
+      return updated;
+    }
+
+    const data = this.fsLoad();
     const index = data.requests.findIndex((r) => r.id === id);
     if (index === -1) return null;
 
-    const updated = {
-      ...data.requests[index],
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
-
+    const updated = { ...data.requests[index], ...updates, updatedAt: new Date().toISOString() };
     data.requests[index] = updated;
-    await this.save(data);
+    this.fsSave(data);
     return updated;
   }
 
   // --- Payments ---
   async getAllPayments(): Promise<PaymentRecord[]> {
-    const data = await this.load();
-    return data.payments.sort(
+    if (kvBackendActive()) {
+      return (await this.kvLoadPayments()).sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    }
+    return this.fsLoad().payments.sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
 
   async getPaymentById(paymentId: string): Promise<PaymentRecord | null> {
-    const data = await this.load();
-    return data.payments.find((p) => p.paymentId === paymentId) || null;
+    if (kvBackendActive()) {
+      await this.ensureSeeded();
+      const raw = await this.kv().get<string>(this.payKey(paymentId));
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw) as PaymentRecord;
+      } catch {
+        return null;
+      }
+    }
+    return this.fsLoad().payments.find((p) => p.paymentId === paymentId) || null;
   }
 
   async getPaymentByRequestId(requestId: string): Promise<PaymentRecord | null> {
-    const data = await this.load();
-    return data.payments.find((p) => p.requestId === requestId) || null;
+    const payments = kvBackendActive() ? await this.kvLoadPayments() : this.fsLoad().payments;
+    return payments.find((p) => p.requestId === requestId) || null;
   }
 
   async savePayment(record: PaymentRecord): Promise<PaymentRecord> {
-    const data = await this.load();
+    if (kvBackendActive()) {
+      await this.ensureSeeded();
+      await this.kv().set(this.payKey(record.paymentId), JSON.stringify(record));
+      await this.kv().lpush(K_PAY_LIST, record.paymentId);
+      return record;
+    }
+
+    const data = this.fsLoad();
     const existingIndex = data.payments.findIndex((p) => p.paymentId === record.paymentId);
     if (existingIndex >= 0) {
       data.payments[existingIndex] = record;
     } else {
       data.payments.unshift(record);
     }
-    await this.save(data);
+    this.fsSave(data);
     return record;
   }
 
@@ -257,7 +347,56 @@ export class DatabaseStore {
     payerRouting?: string,
     payerName?: string
   ): Promise<{ payment: PaymentRecord | null; request: DesignRequest | null }> {
-    const data = await this.load();
+    if (kvBackendActive()) {
+      await this.ensureSeeded();
+      let payment = await this.getPaymentById(paymentId);
+      let request: DesignRequest | null = null;
+
+      if (payment) {
+        payment.status = status;
+        if (payerRouting) payment.payerRouting = payerRouting;
+        if (payerName) payment.payerName = payerName;
+        if (status === "payment_successful") {
+          payment.paidAt = new Date().toISOString();
+        }
+        await this.kv().set(this.payKey(paymentId), JSON.stringify(payment));
+
+        request = payment.requestId ? await this.getRequestById(payment.requestId) : null;
+        if (request) {
+          if (status === "payment_successful") request.status = "paid";
+          request.updatedAt = new Date().toISOString();
+          await this.kv().set(this.reqKey(request.id), JSON.stringify(request));
+        }
+        return { payment, request };
+      }
+
+      request =
+        (await this.getAllRequests()).find((r) => r.fleecaPaymentId === paymentId) || null;
+      if (request && request.fleecaPaymentId === paymentId) {
+        const newRecord: PaymentRecord = {
+          paymentId,
+          requestId: request.id,
+          amount: request.quoteAmount || 0,
+          mode: 0,
+          description: `Deposit for ${request.id}`,
+          status,
+          payerRouting,
+          payerName,
+          createdAt: new Date().toISOString(),
+          paidAt: status === "payment_successful" ? new Date().toISOString() : undefined,
+        };
+        await this.kv().set(this.payKey(paymentId), JSON.stringify(newRecord));
+        await this.kv().lpush(K_PAY_LIST, paymentId);
+
+        if (status === "payment_successful") request.status = "paid";
+        request.updatedAt = new Date().toISOString();
+        await this.kv().set(this.reqKey(request.id), JSON.stringify(request));
+        return { payment: newRecord, request };
+      }
+      return { payment: null, request: null };
+    }
+
+    const data = this.fsLoad();
     let payment = data.payments.find((p) => p.paymentId === paymentId) || null;
     let request: DesignRequest | null = null;
 
@@ -301,7 +440,7 @@ export class DatabaseStore {
       }
     }
 
-    await this.save(data);
+    this.fsSave(data);
     return { payment, request };
   }
 }
