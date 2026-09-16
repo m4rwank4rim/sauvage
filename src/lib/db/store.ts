@@ -80,15 +80,26 @@ const SEED_PAYMENTS: PaymentRecord[] = [
   },
 ];
 
-const kvBackendActive = (): boolean =>
-  Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+const kvEnv = (): { url: string | undefined; token: string | undefined } => {
+  const url = process.env.UPSTASH_REDIS_REST_URL
+    || process.env.KV_REST_API_URL
+    || process.env.REDIS_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+    || process.env.KV_REST_API_TOKEN
+    || process.env.REDIS_REST_API_TOKEN;
+  return { url, token };
+};
+
+const kvBackendActive = (): boolean => {
+  const env = kvEnv();
+  return Boolean(env.url && env.token);
+};
 
 export class DatabaseStore {
-  private kv = (): Redis =>
-    new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL as string,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
-    });
+  private kv = (): Redis => {
+    const env = kvEnv();
+    return new Redis({ url: env.url as string, token: env.token as string });
+  };
 
   private async load(): Promise<DatabaseSchema> {
     if (kvBackendActive()) {
@@ -101,7 +112,15 @@ export class DatabaseStore {
         }
       }
       const seeded: DatabaseSchema = { requests: SEED_REQUESTS, payments: SEED_PAYMENTS };
-      await this.save(seeded);
+      await this.kv().setnx(KV_KEY, JSON.stringify(seeded));
+      const next = await this.kv().get<string>(KV_KEY);
+      if (next) {
+        try {
+          return JSON.parse(next) as DatabaseSchema;
+        } catch {
+          return seeded;
+        }
+      }
       return seeded;
     }
 
