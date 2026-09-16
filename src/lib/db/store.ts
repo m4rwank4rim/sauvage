@@ -126,11 +126,10 @@ export class DatabaseStore {
     let requests = SEED_REQUESTS;
     let payments = SEED_PAYMENTS;
     try {
-      const legacy = await this.kv().get<string>(LEGACY_KEY);
+      const legacy = await this.kv().get<DatabaseSchema>(LEGACY_KEY);
       if (legacy) {
-        const data = JSON.parse(legacy) as DatabaseSchema;
-        requests = data.requests && data.requests.length ? data.requests : SEED_REQUESTS;
-        payments = data.payments && data.payments.length ? data.payments : SEED_PAYMENTS;
+        requests = legacy.requests && legacy.requests.length ? legacy.requests : SEED_REQUESTS;
+        payments = legacy.payments && legacy.payments.length ? legacy.payments : SEED_PAYMENTS;
       }
     } catch {
       console.error("Failed to migrate legacy KV doc, using seeds.");
@@ -156,13 +155,8 @@ export class DatabaseStore {
     for (const id of ids) {
       if (seen.has(id)) continue;
       seen.add(id);
-      const raw = await this.kv().get<string>(this.reqKey(id));
-      if (!raw) continue;
-      try {
-        out.push(JSON.parse(raw) as DesignRequest);
-      } catch {
-        /* skip corrupt item */
-      }
+      const item = await this.kv().get<DesignRequest>(this.reqKey(id));
+      if (item) out.push(item);
     }
     return out;
   }
@@ -176,13 +170,8 @@ export class DatabaseStore {
     for (const id of ids) {
       if (seen.has(id)) continue;
       seen.add(id);
-      const raw = await this.kv().get<string>(this.payKey(id));
-      if (!raw) continue;
-      try {
-        out.push(JSON.parse(raw) as PaymentRecord);
-      } catch {
-        /* skip corrupt item */
-      }
+      const item = await this.kv().get<PaymentRecord>(this.payKey(id));
+      if (item) out.push(item);
     }
     return out;
   }
@@ -234,13 +223,7 @@ export class DatabaseStore {
   async getRequestById(id: string): Promise<DesignRequest | null> {
     if (kvBackendActive()) {
       await this.ensureSeeded();
-      const raw = await this.kv().get<string>(this.reqKey(id));
-      if (!raw) return null;
-      try {
-        return JSON.parse(raw) as DesignRequest;
-      } catch {
-        return null;
-      }
+      return (await this.kv().get<DesignRequest>(this.reqKey(id))) ?? null;
     }
     return this.fsLoad().requests.find((r) => r.id === id) || null;
   }
@@ -306,13 +289,7 @@ export class DatabaseStore {
   async getPaymentById(paymentId: string): Promise<PaymentRecord | null> {
     if (kvBackendActive()) {
       await this.ensureSeeded();
-      const raw = await this.kv().get<string>(this.payKey(paymentId));
-      if (!raw) return null;
-      try {
-        return JSON.parse(raw) as PaymentRecord;
-      } catch {
-        return null;
-      }
+      return (await this.kv().get<PaymentRecord>(this.payKey(paymentId))) ?? null;
     }
     return this.fsLoad().payments.find((p) => p.paymentId === paymentId) || null;
   }
