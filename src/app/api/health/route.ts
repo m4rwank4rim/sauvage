@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { dbStore, kvBackendName } from "../../../lib/db/store";
+import { dbStore, kvBackendName, kvEnv } from "../../../lib/db/store";
 
 export async function GET() {
   try {
@@ -7,6 +7,7 @@ export async function GET() {
     const payments = await dbStore.getAllPayments();
     return NextResponse.json({
       backend: kvBackendName(),
+      kvHost: kvEnv().url ? new URL(kvEnv().url as string).hostname : "none",
       requestCount: requests.length,
       paymentCount: payments.length,
       requestIds: requests.slice(0, 10).map((r) => r.id),

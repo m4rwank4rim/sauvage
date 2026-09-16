@@ -89,6 +89,7 @@ const kvEnv = (): { url: string | undefined; token: string | undefined } => {
     || process.env.REDIS_REST_API_TOKEN;
   return { url, token };
 };
+export { kvEnv };
 
 const kvBackendActive = (): boolean => {
   const env = kvEnv();
