@@ -87,3 +87,13 @@ export interface PortfolioItem {
   aspectRatio?: string;
   previewType: "logo" | "menu" | "digital" | "signage";
 }
+
+export interface Review {
+  id: string;
+  characterName: string;
+  businessName?: string;
+  rating: number; // 1 .. 5
+  content: string;
+  projectDelivered?: string;
+  createdAt: string;
+}

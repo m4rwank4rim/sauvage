@@ -1,11 +1,12 @@
 import fs from "fs";
 import path from "path";
 import { Redis } from "@upstash/redis";
-import { DesignRequest, PaymentRecord } from "../types";
+import { DesignRequest, PaymentRecord, Review } from "../types";
 
 interface DatabaseSchema {
   requests: DesignRequest[];
   payments: PaymentRecord[];
+  reviews: Review[];
 }
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -14,75 +15,8 @@ const DB_FILE = path.join(DATA_DIR, "agency.json");
 const LEGACY_KEY = "agency:db";
 const K_REQ_LIST = "agency:reqs";
 const K_PAY_LIST = "agency:pays";
+const K_REV_LIST = "agency:reviews";
 const K_INIT = "agency:init";
-
-const SEED_REQUESTS: DesignRequest[] = [
-  {
-    id: "REQ-1042",
-    clientName: "Anthony 'Tony' Carlucci",
-    discordTag: "tony_carlucci#0001",
-    businessName: "Carlucci's Ristorante & Pizzeria",
-    projectType: "Menu & Print Collateral",
-    budgetRange: "$15,000 - $25,000",
-    urgency: "standard",
-    brief:
-      "We need an authentic Little Italy dinner & wine menu for our grand opening on Alta Street. Looking for a deep burgundy, gold foil, and cream aesthetic. Needs 4 pages: Antipasti, Pasta, Mains, and Italian Wine Cellar.",
-    status: "paid",
-    quoteAmount: 20000,
-    quoteNotes: "4-page leather bound texture menu + forum BBCode menu card.",
-    fleecaPaymentId: "flc_seed_1042",
-    fleecaPaymentLink: "/payment/result?payment_id=flc_seed_1042",
-    createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
-    updatedAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-  },
-  {
-    id: "REQ-1043",
-    clientName: "Sgt. Michael Ross",
-    discordTag: "mross_lssd#4412",
-    businessName: "San Andreas Highway Patrol Motorsports",
-    projectType: "Menu & Print Collateral",
-    budgetRange: "$40,000 - $60,000",
-    urgency: "priority",
-    brief:
-      "Custom high-visibility interceptor livery for our community outreach Bravado Buffalo STX and Vapid Dominator GT. Incorporate reflective chevron striping, SAHP star badge, and motto.",
-    status: "quoted",
-    quoteAmount: 45000,
-    quoteNotes: "Full multi-model livery pack with 4K template layers and .ytd configuration.",
-    fleecaPaymentId: "flc_seed_1043",
-    fleecaPaymentLink: "/fleeca-mock/checkout/flc_seed_1043?amount=45000&req=REQ-1043",
-    createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
-    updatedAt: new Date(Date.now() - 12 * 3600000).toISOString(),
-  },
-  {
-    id: "REQ-1044",
-    clientName: "Chloe Davenport",
-    discordTag: "chloedavenport#9920",
-    businessName: "Lust & Luxe Nightclub",
-    projectType: "Brand Kit",
-    budgetRange: "$30,000 - $50,000",
-    urgency: "rush",
-    brief:
-      "Full rebrand of our Vinewood nightlife lounge. Looking for neon magenta, dark violet, and cyber-luxe aesthetics. We need club logo, VIP wristbands, drink menu, and Facebrowser promotional flyers.",
-    status: "pending_quote",
-    createdAt: new Date(Date.now() - 2 * 3600000).toISOString(),
-    updatedAt: new Date(Date.now() - 2 * 3600000).toISOString(),
-  },
-];
-
-const SEED_PAYMENTS: PaymentRecord[] = [
-  {
-    paymentId: "flc_seed_1042",
-    requestId: "REQ-1042",
-    amount: 20000,
-    mode: 0,
-    description: "Design deposit — Request #REQ-1042 (Carlucci's Menu)",
-    status: "payment_successful",
-    payerRouting: "020098144",
-    payerName: "Anthony Carlucci",
-    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-    paidAt: new Date(Date.now() - 2 * 86400000 + 45000).toISOString(),
-  },
-];
 
 const kvEnv = (): { url: string | undefined; token: string | undefined } => {
   const url = process.env.UPSTASH_REDIS_REST_URL
@@ -119,35 +53,35 @@ export class DatabaseStore {
 
   private reqKey = (id: string): string => `agency:req:${id}`;
   private payKey = (id: string): string => `agency:pay:${id}`;
+  private revKey = (id: string): string => `agency:rev:${id}`;
 
-  private async ensureSeeded(): Promise<void> {
+  private async ensureInitialized(): Promise<void> {
     if ((await this.kv().setnx(K_INIT, "1")) !== 1) return;
 
-    let requests = SEED_REQUESTS;
-    let payments = SEED_PAYMENTS;
     try {
       const legacy = await this.kv().get<DatabaseSchema>(LEGACY_KEY);
       if (legacy) {
-        requests = legacy.requests && legacy.requests.length ? legacy.requests : SEED_REQUESTS;
-        payments = legacy.payments && legacy.payments.length ? legacy.payments : SEED_PAYMENTS;
+        for (const req of legacy.requests || []) {
+          await this.kv().set(this.reqKey(req.id), JSON.stringify(req));
+          await this.kv().lpush(K_REQ_LIST, req.id);
+        }
+        for (const pay of legacy.payments || []) {
+          await this.kv().set(this.payKey(pay.paymentId), JSON.stringify(pay));
+          await this.kv().lpush(K_PAY_LIST, pay.paymentId);
+        }
+        for (const rev of legacy.reviews || []) {
+          await this.kv().set(this.revKey(rev.id), JSON.stringify(rev));
+          await this.kv().lpush(K_REV_LIST, rev.id);
+        }
       }
-    } catch {
-      console.error("Failed to migrate legacy KV doc, using seeds.");
-    }
-
-    for (const req of requests) {
-      await this.kv().set(this.reqKey(req.id), JSON.stringify(req));
-      await this.kv().lpush(K_REQ_LIST, req.id);
-    }
-    for (const pay of payments) {
-      await this.kv().set(this.payKey(pay.paymentId), JSON.stringify(pay));
-      await this.kv().lpush(K_PAY_LIST, pay.paymentId);
+    } catch (err) {
+      console.error("Failed to migrate legacy KV document:", err);
     }
     await this.kv().del(LEGACY_KEY);
   }
 
   private async kvLoadRequests(): Promise<DesignRequest[]> {
-    await this.ensureSeeded();
+    await this.ensureInitialized();
     const ids = await this.kv().lrange<string>(K_REQ_LIST, 0, -1);
     if (!ids) return [];
     const seen = new Set<string>();
@@ -162,7 +96,7 @@ export class DatabaseStore {
   }
 
   private async kvLoadPayments(): Promise<PaymentRecord[]> {
-    await this.ensureSeeded();
+    await this.ensureInitialized();
     const ids = await this.kv().lrange<string>(K_PAY_LIST, 0, -1);
     if (!ids) return [];
     const seen = new Set<string>();
@@ -176,24 +110,41 @@ export class DatabaseStore {
     return out;
   }
 
+  private async kvLoadReviews(): Promise<Review[]> {
+    await this.ensureInitialized();
+    const ids = await this.kv().lrange<string>(K_REV_LIST, 0, -1);
+    if (!ids) return [];
+    const seen = new Set<string>();
+    const out: Review[] = [];
+    for (const id of ids) {
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const item = await this.kv().get<Review>(this.revKey(id));
+      if (item) out.push(item);
+    }
+    return out;
+  }
+
   private fsLoad(): DatabaseSchema {
     try {
       if (!fs.existsSync(DATA_DIR)) {
         fs.mkdirSync(DATA_DIR, { recursive: true });
       }
       if (!fs.existsSync(DB_FILE)) {
-        const initialData: DatabaseSchema = {
-          requests: SEED_REQUESTS,
-          payments: SEED_PAYMENTS,
-        };
-        fs.writeFileSync(DB_FILE, JSON.stringify(initialData, null, 2), "utf8");
-        return initialData;
+        const data: DatabaseSchema = { requests: [], payments: [], reviews: [] };
+        fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf8");
+        return data;
       }
       const raw = fs.readFileSync(DB_FILE, "utf8");
-      return JSON.parse(raw) as DatabaseSchema;
+      const parsed = JSON.parse(raw) as DatabaseSchema;
+      return {
+        requests: parsed.requests || [],
+        payments: parsed.payments || [],
+        reviews: parsed.reviews || [],
+      };
     } catch (err) {
       console.error("Failed to read store:", err);
-      return { requests: SEED_REQUESTS, payments: SEED_PAYMENTS };
+      return { requests: [], payments: [], reviews: [] };
     }
   }
 
@@ -222,7 +173,7 @@ export class DatabaseStore {
 
   async getRequestById(id: string): Promise<DesignRequest | null> {
     if (kvBackendActive()) {
-      await this.ensureSeeded();
+      await this.ensureInitialized();
       return (await this.kv().get<DesignRequest>(this.reqKey(id))) ?? null;
     }
     return this.fsLoad().requests.find((r) => r.id === id) || null;
@@ -243,7 +194,7 @@ export class DatabaseStore {
     };
 
     if (kvBackendActive()) {
-      await this.ensureSeeded();
+      await this.ensureInitialized();
       await this.kv().set(this.reqKey(id), JSON.stringify(newReq));
       await this.kv().lpush(K_REQ_LIST, id);
       return newReq;
@@ -288,7 +239,7 @@ export class DatabaseStore {
 
   async getPaymentById(paymentId: string): Promise<PaymentRecord | null> {
     if (kvBackendActive()) {
-      await this.ensureSeeded();
+      await this.ensureInitialized();
       return (await this.kv().get<PaymentRecord>(this.payKey(paymentId))) ?? null;
     }
     return this.fsLoad().payments.find((p) => p.paymentId === paymentId) || null;
@@ -301,7 +252,7 @@ export class DatabaseStore {
 
   async savePayment(record: PaymentRecord): Promise<PaymentRecord> {
     if (kvBackendActive()) {
-      await this.ensureSeeded();
+      await this.ensureInitialized();
       await this.kv().set(this.payKey(record.paymentId), JSON.stringify(record));
       await this.kv().lpush(K_PAY_LIST, record.paymentId);
       return record;
@@ -325,7 +276,7 @@ export class DatabaseStore {
     payerName?: string
   ): Promise<{ payment: PaymentRecord | null; request: DesignRequest | null }> {
     if (kvBackendActive()) {
-      await this.ensureSeeded();
+      await this.ensureInitialized();
       let payment = await this.getPaymentById(paymentId);
       let request: DesignRequest | null = null;
 
@@ -419,6 +370,68 @@ export class DatabaseStore {
 
     this.fsSave(data);
     return { payment, request };
+  }
+
+  // --- Reviews ---
+  async getAllReviews(): Promise<Review[]> {
+    if (kvBackendActive()) {
+      return (await this.kvLoadReviews()).sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    }
+    return this.fsLoad().reviews.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  async createReview(
+    input: Omit<Review, "id" | "createdAt">
+  ): Promise<Review> {
+    const id = `REV-${Math.random().toString(36).slice(2, 10)}`;
+    const review: Review = {
+      ...input,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+
+    if (kvBackendActive()) {
+      await this.ensureInitialized();
+      await this.kv().set(this.revKey(id), JSON.stringify(review));
+      await this.kv().lpush(K_REV_LIST, id);
+      return review;
+    }
+
+    const data = this.fsLoad();
+    data.reviews.unshift(review);
+    this.fsSave(data);
+    return review;
+  }
+
+  // --- Maintenance ---
+  async resetAllData(): Promise<number> {
+    let deleted = 0;
+    if (kvBackendActive()) {
+      let cursor = "0";
+      do {
+        const result = await this.kv().scan(cursor, { match: "agency:*", count: 200 });
+        const keys = result[1] || [];
+        for (const key of keys) {
+          await this.kv().del(key);
+          deleted++;
+        }
+        cursor = result[0];
+      } while (cursor !== "0");
+    } else {
+      try {
+        if (fs.existsSync(DB_FILE)) {
+          fs.writeFileSync(DB_FILE, JSON.stringify({ requests: [], payments: [], reviews: [] }, null, 2), "utf8");
+          deleted++;
+        }
+      } catch (err) {
+        console.error("Failed to reset local store:", err);
+      }
+    }
+    return deleted;
   }
 }
 

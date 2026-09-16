@@ -2,26 +2,31 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { Palette, Building2, Timer, Landmark } from "lucide-react";
-import { siteConfig } from "../config/siteConfig";
+import { BadgeCheck, Building2, Landmark, Timer } from "lucide-react";
 
-const ICONS = [Palette, Building2, Timer, Landmark];
-
-const parseValue = (value: string) => {
-  const match = value.match(/^([^\d]*)(\d+)(.*)$/);
-  if (!match) return { prefix: value, number: 0, suffix: "" };
-  return { prefix: match[1], number: parseInt(match[2], 10), suffix: match[3] };
+type StatsData = {
+  requests: number;
+  payments: number;
+  commissions: number;
+  clients: number;
+  funded: number;
+  avgTurnaroundHours: number | null;
 };
+
+const ICONS = [BadgeCheck, Building2, Landmark, Timer];
 
 const CountUp: React.FC<{ value: string }> = ({ value }) => {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
   const [display, setDisplay] = useState("0");
-  const { prefix, number, suffix } = parseValue(value);
+  const match = value.match(/^([^\d]*)(\d+)(.*)$/);
+  const prefix = match?.[1] ?? value;
+  const number = match ? parseInt(match[2], 10) : 0;
+  const suffix = match?.[3] ?? "";
 
   useEffect(() => {
     if (!inView) {
-      setDisplay("0");
+      setDisplay(number ? "0" : value);
       return;
     }
     if (number === 0) {
@@ -51,11 +56,69 @@ const CountUp: React.FC<{ value: string }> = ({ value }) => {
   );
 };
 
+const toStatRows = (d: StatsData) => [
+  {
+    value: `${d.commissions}`,
+    label: "Commissions Delivered",
+    description: "Paid & confirmed via Fleeca receipts.",
+  },
+  {
+    value: `${d.clients}`,
+    label: "Business Clients",
+    description: "Distinct enterprises served across San Andreas.",
+  },
+  {
+    value: `$${d.funded.toLocaleString()}`,
+    label: "Total Funded",
+    description: "In-game dollars safely moved through the Fleeca gateway.",
+  },
+  {
+    value: d.avgTurnaroundHours != null ? `${d.avgTurnaroundHours}h` : "—",
+    label: "Average Turnaround",
+    description: "From deposit confirmation to paid invoice.",
+  },
+];
+
 export const StatsBar: React.FC = () => {
+  const [stats, setStats] = useState<StatsData | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/stats")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (active && json?.data) setStats(json.data as StatsData);
+      })
+      .catch(() => {
+        if (active) setStats({ requests: 0, payments: 0, commissions: 0, clients: 0, funded: 0, avgTurnaroundHours: null });
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!stats) {
+    return (
+      <section className="max-w-7xl mx-auto px-5 md:px-8 py-14 md:py-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:divide-x divide-white/[0.08] animate-pulse">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="py-8 px-2 sm:px-6 lg:px-10">
+              <div className="h-8 w-8 rounded-[10px] bg-white/[0.06] mb-6" />
+              <div className="h-10 w-24 rounded bg-white/[0.08]" />
+              <div className="h-4 w-32 rounded bg-white/[0.06] mt-4" />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  const rows = toStatRows(stats);
+
   return (
     <section className="max-w-7xl mx-auto px-5 md:px-8 py-14 md:py-20">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:divide-x divide-white/[0.08]">
-        {siteConfig.stats.map((stat, idx) => {
+        {rows.map((stat, idx) => {
           const Icon = ICONS[idx % ICONS.length];
           return (
             <motion.div

@@ -22,26 +22,12 @@ export interface SiteConfig {
     discordUrl: string;
     supportEmail: string;
   };
-  stats: {
-    label: string;
-    value: string;
-    description: string;
-  }[];
   howItWorks: {
     step: string;
     title: string;
     description: string;
   }[];
   services: ServiceTier[];
-  testimonials: {
-    id: string;
-    characterName: string;
-    businessName: string;
-    avatarText: string;
-    quote: string;
-    rating: number;
-    projectDelivered: string;
-  }[];
   faqs: {
     question: string;
     answer: string;
@@ -63,28 +49,6 @@ export const siteConfig: SiteConfig = {
     discordUrl: "https://discord.gg/gtaworld",
     supportEmail: "contact@sauvagecreative.ls",
   },
-  stats: [
-    {
-      value: "160+",
-      label: "Designs Delivered",
-      description: "Logos, menus, & brand kits handed off across San Andreas.",
-    },
-    {
-      value: "45+",
-      label: "Businesses Branded",
-      description: "From Vinewood clubs to Sandy Shores workshops and trucking fleets.",
-    },
-    {
-      value: "24-48h",
-      label: "Average Turnaround",
-      description: "Swift, responsive delivery so your business grand opening isn't delayed.",
-    },
-    {
-      value: "100%",
-      label: "Fleeca Integrated",
-      description: "Instant in-character banking verification via Fleeca Gateway API.",
-    },
-  ],
   howItWorks: [
     {
       step: "01",
@@ -158,48 +122,6 @@ export const siteConfig: SiteConfig = {
         "Promotional event flyer (Facebrowser / Forum ready)",
         "Ready-to-use image URLs hosted indefinitely",
       ],
-    },
-  ],
-  testimonials: [
-    {
-      id: "t1",
-      characterName: "Dominic Vance",
-      businessName: "CEO, Vance Security Group",
-      avatarText: "DV",
-      quote:
-        "SAUVAGE overhauled our armored transit fleet liveries and our corporate thread. Within 48 hours of paying the Fleeca deposit, the assets were ready. Professionalism unmatched in Los Santos.",
-      rating: 5,
-      projectDelivered: "Fleet Liveries & Corporate Kit",
-    },
-    {
-      id: "t2",
-      characterName: "Camilla Solano",
-      businessName: "Proprietor, El Sol Lounge & Bar",
-      avatarText: "CS",
-      quote:
-        "Our cocktail menu and grand opening flyers drew over 60 guests on opening night. Paying through Fleeca was instant and completely seamless. Wouldn't trust anyone else with my branding.",
-      rating: 5,
-      projectDelivered: "Cocktail Menu & Event Promo",
-    },
-    {
-      id: "t3",
-      characterName: "Marcus Thorne",
-      businessName: "Managing Partner, Thorne & Associates Legal",
-      avatarText: "MT",
-      quote:
-        "The typography and polish on our business cards and forum legal portal give us instant credibility with high-net-worth clients and corporate plaintiffs. Worth every in-game dollar.",
-      rating: 5,
-      projectDelivered: "Legal Brand Identity & Forum UI",
-    },
-    {
-      id: "t4",
-      characterName: "Elena 'Roxie' Petrova",
-      businessName: "Lead Tuner, Redline Customs Sandy Shores",
-      avatarText: "EP",
-      quote:
-        "Got our garage neon signage, t-shirt graphics, and mechanic shop invoice books designed. Speedy communication on Discord and zero hassle with Fleeca banking payments.",
-      rating: 5,
-      projectDelivered: "Garage Identity & Shop Merch",
     },
   ],
   faqs: [

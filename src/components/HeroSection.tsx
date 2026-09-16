@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight, CheckCircle2, Landmark } from "lucide-react";
@@ -10,9 +10,30 @@ import { PortfolioGraphic } from "./PortfolioGraphic";
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
+type LatestPayment = {
+  id: string;
+  projectType: string | null;
+  amount: number;
+  paidAt: string | null;
+};
+
 export const HeroSection: React.FC = () => {
   const [primary, secondary, tertiary] = PORTFOLIO_ITEMS;
   const featured = PORTFOLIO_ITEMS[0] ?? primary;
+  const [latest, setLatest] = useState<LatestPayment | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/stats")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (active && json?.data?.latest) setLatest(json.data.latest as LatestPayment);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <section className="relative overflow-hidden pt-36 md:pt-44 pb-20 md:pb-28">
@@ -153,10 +174,16 @@ export const HeroSection: React.FC = () => {
                 <div className="font-mono text-[9px] text-text-muted mt-0.5">Instant payout</div>
               </div>
             </div>
-            <div className="absolute -right-3 md:-right-8 bottom-16 px-3.5 py-2 rounded-xl border border-white/[0.1] bg-[#141417]/90 backdrop-blur-md shadow-card-subtle animate-float-delayed">
-              <div className="font-mono text-[10px] text-text-primary">REQ-1044 · Brand Kit</div>
-              <div className="font-mono text-[9px] text-electric-lime mt-0.5">$35,000 · Paid via Fleeca</div>
-            </div>
+            {latest && (
+              <div className="absolute -right-3 md:-right-8 bottom-16 px-3.5 py-2 rounded-xl border border-white/[0.1] bg-[#141417]/90 backdrop-blur-md shadow-card-subtle animate-float-delayed">
+                <div className="font-mono text-[10px] text-text-primary">
+                  {latest.id} · {latest.projectType || "Design Project"}
+                </div>
+                <div className="font-mono text-[9px] text-electric-lime mt-0.5">
+                  ${latest.amount.toLocaleString()} · Paid via Fleeca
+                </div>
+              </div>
+            )}
           </motion.div>
         </div>
       </div>

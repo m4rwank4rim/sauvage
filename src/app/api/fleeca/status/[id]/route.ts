@@ -15,8 +15,7 @@ export async function GET(
     // If it's a sandbox/simulated payment, return local record directly
     if (
       paymentId.startsWith("flc_sim_") ||
-      paymentId.startsWith("flc_dev_") ||
-      paymentId.startsWith("flc_seed_")
+      paymentId.startsWith("flc_dev_")
     ) {
       if (localRecord) {
         return NextResponse.json({ success: true, data: localRecord, source: "local" });
