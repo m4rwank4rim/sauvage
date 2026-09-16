@@ -44,7 +44,7 @@ export const siteConfig: SiteConfig = {
     "Bespoke brand identities, cocktail menus, and faction visuals crafted specifically for GTA World businesses. Instant deposits & payouts powered by Fleeca Bank.",
   serverInfo: {
     server: "GTA World Roleplay (GTAW)",
-    platform: "RAGE:MP",
+    platform: "FiveM",
     operatingHours: "Monday - Sunday: 12:00 PM – 02:00 AM LS Time",
     inGameLocation: "Badger Tower Office Complex - Floor 2, Room 3",
     hotline: "19003308",

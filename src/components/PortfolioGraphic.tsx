@@ -127,7 +127,7 @@ export const PortfolioGraphic: React.FC<PortfolioGraphicProps> = ({
 
           <div className="relative z-10 flex justify-between text-[9px] font-mono text-[#6B6B72] border-t border-white/5 pt-2">
             <span>4K UV MAP</span>
-            <span className="text-[#CCFF00]">RAGE:MP READY</span>
+            <span className="text-[#CCFF00]">FiveM READY</span>
           </div>
         </div>
       );

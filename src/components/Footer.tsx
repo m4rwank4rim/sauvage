@@ -113,7 +113,7 @@ export const Footer: React.FC = () => {
                 <Phone className="w-3.5 h-3.5" />
                 Hotline: {siteConfig.serverInfo.hotline}
               </p>
-              <p className="text-text-muted">RAGE:MP GTA World</p>
+              <p className="text-text-muted">FiveM GTA World</p>
             </div>
           </div>
 
