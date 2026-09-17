@@ -10,7 +10,7 @@ import {
   CheckCircle2, Clock, CreditCard, Package, ArrowRight, Sparkles,
   AlertCircle, FileText, User, Zap, ExternalLink, Download, Send,
   Paperclip, Loader2, Star, ShieldCheck, MessageSquare, Landmark,
-  PartyPopper, LogIn, Lock
+  PartyPopper, LogIn, Lock, Activity, PenTool, Wifi
 } from "lucide-react";
 import { DesignRequest, PaymentRecord, ChatMessage } from "../../../lib/types";
 import { RequestDetailSkeleton } from "../../../components/Skeleton";
@@ -52,6 +52,80 @@ const fileToBase64 = (file: File): Promise<string> =>
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+
+// Real-time status indicator component
+const StatusIndicator: React.FC<{ request: DesignRequest }> = ({ request }) => {
+  const [status, setStatus] = useState<"idle" | "typing" | "uploading" | "synced">("synced");
+  const [lastActivity, setLastActivity] = useState<Date | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (request.status === "completed" || request.status === "cancelled") return;
+
+    // Poll for updates every 5 seconds when visible
+    const poll = () => {
+      if (document.visibilityState === "visible") {
+        fetch(`/api/requests/${request.id}`, { cache: "no-store" })
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.success && json.data) {
+              const updated = json.data as DesignRequest;
+              // Check for new messages from designer
+              const currentCount = request.messages?.length ?? 0;
+              const newCount = updated.messages?.length ?? 0;
+              if (newCount > currentCount) {
+                const lastMsg = updated.messages?.[newCount - 1];
+                if (lastMsg?.authorRole === "designer") {
+                  setStatus("typing");
+                  setLastActivity(new Date());
+                  setTimeout(() => setStatus("synced"), 3000);
+                } else if (lastMsg?.attachmentUrl) {
+                  setStatus("uploading");
+                  setLastActivity(new Date());
+                  setTimeout(() => setStatus("synced"), 3000);
+                }
+              }
+            }
+          })
+          .catch(() => {});
+      }
+    };
+
+    intervalRef.current = setInterval(poll, 5000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [request.id, request.messages?.length, request.status]);
+
+  if (request.status === "completed" || request.status === "cancelled") return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mb-6 rounded-2xl bg-gradient-to-r from-[#1E1E24] to-[#141417] border border-white/[0.08] p-4 flex items-center gap-3"
+    >
+      <div className={`relative w-2.5 h-2.5 rounded-full ${
+        status === "typing" ? "bg-[#CCFF00] animate-pulse" :
+        status === "uploading" ? "bg-[#CCFF00] animate-bounce" :
+        "bg-[#6B6B72]"
+      }`} />
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-mono text-[#CCFF00] uppercase tracking-wider">
+          {status === "typing" ? "Designer is typing…" :
+           status === "uploading" ? "Designer uploaded files…" :
+           "Live — synced"}
+        </p>
+        {lastActivity && (
+          <p className="text-[10px] text-[#6B6B72] mt-0.5">
+            Last update: {lastActivity.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          </p>
+        )}
+      </div>
+      <Wifi className="w-4 h-4 text-[#6B6B72]" />
+    </motion.div>
+  );
+};
 
 const isImageName = (name: string) => /\.(png|jpe?g|gif|webp|svg|bmp)$/i.test(name);
 
@@ -357,6 +431,9 @@ export default function RequestDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Real-time status indicator */}
+      <StatusIndicator request={request} />
 
       {/* Deposit due */}
       {request.status === "awaiting_deposit" && (
