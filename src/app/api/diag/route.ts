@@ -1,16 +1,48 @@
 import { NextResponse } from "next/server";
 import { kvEnv } from "../../../lib/db/store";
 import { blobConfigured, blobProbe } from "../../../lib/blob";
+import { discordBotConfigured } from "../../../lib/discordNotify";
 
 export const dynamic = "force-dynamic";
 
 const mask = (t?: string) => (t ? `${t.slice(0, 6)}...${t.slice(-4)}` : undefined);
+
+async function discordDiag() {
+  if (!discordBotConfigured()) return { configured: false };
+  const token = process.env.DISCORD_BOT_TOKEN as string;
+  const guild = process.env.DISCORD_GUILD_ID as string;
+  const headers = { Authorization: `Bot ${token}` };
+  const out: Record<string, unknown> = { configured: true, guildIdSet: true };
+
+  try {
+    const me = await fetch("https://discord.com/api/v10/users/@me", { headers }).then((r) => r.json());
+    out.bot = me?.username ? `${me.username}` : { error: me?.message || "no username" };
+  } catch (err) {
+    out.bot = { error: String(err) };
+  }
+
+  try {
+    const res = await fetch(`https://discord.com/api/v10/guilds/${guild}/roles`, { headers });
+    const roles = await res.json();
+    if (Array.isArray(roles)) {
+      out.roleCount = roles.length;
+      out.verifiedRole = roles.find((r: { name?: string }) => r.name === "Verified Client")?.name ?? null;
+    } else {
+      out.roles = { status: res.status, error: roles?.message || "not an array" };
+    }
+  } catch (err) {
+    out.roles = { error: String(err) };
+  }
+
+  return out;
+}
 
 export async function GET() {
   const env = kvEnv();
   const out: Record<string, unknown> = {
     storageDriver: "vercel-blob",
     blob: await blobProbe(true),
+    discord: await discordDiag(),
     envCandidates: {
       UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
       KV_REST_API_URL: process.env.KV_REST_API_URL,
