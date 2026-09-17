@@ -43,11 +43,27 @@ export type BlobProbeResult = {
   authorized?: boolean;
   storeIdHint?: string;
   tokenMask?: string;
+  envPresent?: boolean;
+  envVars?: string[];
   writeOk?: boolean;
   writeRoundtripMs?: number;
-  envPresent?: boolean;
   error?: string;
 };
+
+const BLOB_CANDIDATE_KEYS = [
+  "BLOB_READ_WRITE_TOKEN",
+  "BLOB_TOKEN",
+  "BLOB_STORE_ID",
+  "BLOB_READ_WRITE_TOKEN_URL",
+  "BLOB_READ_WRITE_TOKEN_CLIENT",
+  "BLOB_READ_WRITE_TOKEN_SERVER",
+  "VERCEL_BLOB_READ_WRITE_TOKEN",
+];
+
+const enumEnvVars = () =>
+  BLOB_CANDIDATE_KEYS.filter((k) => Boolean(process.env[k]))
+    .map((k) => `${k}=${maskToken(process.env[k])}`)
+    .sort();
 
 const maskToken = (t?: string) =>
   t ? `${t.slice(0, 6)}...${t.slice(-4)}` : undefined;
@@ -67,6 +83,7 @@ export async function blobProbe(writeTest = false): Promise<BlobProbeResult> {
       storeIdHint: storeIdHint(TOKEN),
       tokenMask: maskToken(TOKEN),
       envPresent: Boolean(TOKEN),
+      envVars: enumEnvVars(),
     };
   }
   try {
