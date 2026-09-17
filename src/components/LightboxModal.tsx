@@ -122,6 +122,14 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({ item, onClose }) =
                   <span>Order Similar Design</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
+                <Link
+                  href={`/work/${item.id}`}
+                  onClick={onClose}
+                  className="w-full sm:w-auto px-5 py-3.5 rounded-full text-xs text-[#CCFF00] hover:text-[#0B0B0D] bg-[#0B0B0D] hover:bg-[#CCFF00] border border-[#CCFF00]/30 transition-colors flex items-center justify-center gap-2"
+                >
+                  <span>Full Case Study</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
                 <button
                   onClick={onClose}
                   className="w-full sm:w-auto px-5 py-3.5 rounded-full text-xs text-[#A8A8AF] hover:text-white bg-[#0B0B0D] hover:bg-white/5 border border-white/10 transition-colors"

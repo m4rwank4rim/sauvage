@@ -108,9 +108,19 @@ export const FeaturedWork: React.FC<{ items?: PortfolioItem[] }> = ({ items }) =
                   </span>
                 ))}
               </div>
-              <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold text-electric-lime">
-                <Eye className="w-3.5 h-3.5" />
-                <span>Inspect spec</span>
+              <div className="mt-4 flex items-center gap-4">
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-electric-lime">
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>Inspect spec</span>
+                </span>
+                <Link
+                  href={`/work/${item.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-text-secondary hover:text-electric-lime transition-colors"
+                >
+                  <span>Case study</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
 

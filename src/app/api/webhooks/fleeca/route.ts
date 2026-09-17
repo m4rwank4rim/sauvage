@@ -3,6 +3,7 @@ import { fleecaClient } from "../../../../lib/fleeca";
 import { dbStore } from "../../../../lib/db/store";
 import { FleecaWebhookPayload } from "../../../../lib/types";
 import { notifyDiscord } from "../../../../lib/discord";
+import { assignVerifiedClient, notifyClientStatus, dmUser } from "../../../../lib/discordNotify";
 
 export async function POST(req: NextRequest) {
   try {
@@ -76,6 +77,22 @@ export async function POST(req: NextRequest) {
       console.log(
         `[Fleeca Webhook] ✅ Payment confirmed for request #${request.id} — $${amount} from ${payer_name || "unknown"}.`
       );
+
+      // Client notifications (DM + Verified Client role) — best effort
+      const isDeposit =
+        payment_id === request.depositPaymentId || payment_id === request.fleecaPaymentId;
+      if (isDeposit) {
+        await assignVerifiedClient(request.userId);
+        await dmUser(
+          request.userId,
+          "💰 Deposit received",
+          `**#${request.id}** — ${request.projectType}\n\nYour deposit is confirmed. Your project is now unlocked — get production updates and chat with the designer in your project room.`
+        );
+      }
+      if (payment_id === request.balancePaymentId) {
+        await notifyClientStatus(request, "completed");
+      }
+
       await notifyDiscord({
         title: "💰 Payment Received",
         description: `Payment of **$${amount.toLocaleString()}** confirmed for request **#${request.id}** (${request.projectType}).`,

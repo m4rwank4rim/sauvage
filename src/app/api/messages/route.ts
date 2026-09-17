@@ -4,6 +4,7 @@ import { authOptions } from "../../../lib/auth";
 import { dbStore } from "../../../lib/db/store";
 import { requireAdmin } from "../../../lib/admin";
 import { notifyDiscord } from "../../../lib/discord";
+import { dmUser } from "../../../lib/discordNotify";
 import { enforceRateLimit } from "../../../lib/rate-limit";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +47,11 @@ export async function POST(req: NextRequest) {
         attachmentUrl,
         attachmentName,
       });
+      await dmUser(
+        request.userId,
+        "💬 New message from SAUVAGE Design",
+        `**#${request.id}** — ${request.projectType}\n\nA message from your designer awaits in the project room:${text ? `\n\n> ${text.length > 150 ? `${text.slice(0, 150)}…` : text}` : "\n\n(attachment sent)"}${process.env.SITE_URL ? `\n\n📌 ${process.env.SITE_URL}/request/${request.id}` : ""}`
+      );
       return NextResponse.json({ success: true, data: message }, { status: 201 });
     }
 

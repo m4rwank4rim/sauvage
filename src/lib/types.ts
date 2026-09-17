@@ -24,6 +24,7 @@ export interface Attachment {
   size: number;
   type: string;
   dataUrl?: string; // base64 preview for client-uploaded references
+  url?: string; // Vercel Blob URL once the reference file is uploaded
 }
 
 export interface ChatMessage {

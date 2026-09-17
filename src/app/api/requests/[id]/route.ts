@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbStore } from "../../../../lib/db/store";
 import { requireAdmin } from "../../../../lib/admin";
+import { notifyClientStatus } from "../../../../lib/discordNotify";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +64,11 @@ export async function PATCH(
         author: "SAUVAGE Design",
         content: "This project has been cancelled. Reach out on Discord if you have any questions.",
       });
+    }
+
+    // DM the client whenever a status changes — never breaks the admin action
+    if (updated && updates.status && updates.status !== existing.status) {
+      await notifyClientStatus(updated, updates.status as string);
     }
 
     return NextResponse.json({ success: true, data: updated });

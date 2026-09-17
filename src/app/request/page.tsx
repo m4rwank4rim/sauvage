@@ -49,8 +49,17 @@ function RequestPageInner() {
   const { data: session, status } = useSession();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [attachments, setAttachments] = React.useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = React.useState<"" | "uploading" | "failed">("");
   const [formError, setFormError] = React.useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const fileToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
 
   // Pre-fill service / category from URL params (from pricing CTAs)
   const prefilledService = searchParams.get("service") || "";
@@ -140,6 +149,39 @@ function RequestPageInner() {
     setFormError("");
 
     try {
+      // Upload reference files for real — they land in the project room as the opening messages
+      let uploadedRefs: { name: string; size: number; type: string; url: string }[] = [];
+      if (attachments.length > 0) {
+        setUploadProgress("uploading");
+        for (const file of attachments) {
+          if (file.size > 4 * 1024 * 1024) {
+            setUploadProgress("failed");
+            setFormError(`"${file.name}" is over the 4 MB limit.`);
+            setIsSubmitting(false);
+            return;
+          }
+          const data = await fileToBase64(file);
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fileName: file.name, contentType: file.type, data }),
+          });
+          const json = await res.json();
+          if (!res.ok || !json?.data?.url) {
+            setUploadProgress("failed");
+            setFormError(json?.error || `Could not upload "${file.name}".`);
+            setIsSubmitting(false);
+            return;
+          }
+          uploadedRefs.push({
+            name: json.data.fileName,
+            size: file.size,
+            type: file.type,
+            url: json.data.url,
+          });
+        }
+      }
+
       const res = await fetch("/api/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -149,7 +191,7 @@ function RequestPageInner() {
           packageId: selectedServiceId || undefined,
           customBudget: selectedService ? undefined : (total ?? undefined),
           userId: (session?.user as any)?.id,
-          attachments: attachments.map((f) => ({ name: f.name, size: f.size, type: f.type })),
+          attachments: uploadedRefs,
         }),
       });
 
@@ -476,7 +518,7 @@ function RequestPageInner() {
             {isSubmitting ? (
               <>
                 <div className="w-4 h-4 border-2 border-[#0B0B0D]/30 border-t-[#0B0B0D] rounded-full animate-spin" />
-                <span>Submitting brief...</span>
+                <span>{uploadProgress === "uploading" ? "Uploading references…" : "Submitting brief..."}</span>
               </>
             ) : (
               <>

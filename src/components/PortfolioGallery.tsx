@@ -97,9 +97,19 @@ export const PortfolioGallery: React.FC<{ items: PortfolioItem[] }> = ({ items }
                     {item.title}
                   </h3>
                   <p className="mt-1 text-xs text-text-muted">{item.clientName}</p>
-                  <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-electric-lime">
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>Inspect spec</span>
+                  <div className="mt-3 flex items-center gap-4">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-electric-lime">
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Inspect spec</span>
+                    </span>
+                    <Link
+                      href={`/work/${item.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-text-secondary hover:text-electric-lime transition-colors"
+                    >
+                      <span>Case study</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
                   </div>
                 </div>
 

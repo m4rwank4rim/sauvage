@@ -337,7 +337,31 @@ export default function AdminPage() {
                     <div className="text-[#F4F4F0] font-semibold">{req.clientName}</div>
                     <div className="text-[#6B6B72] text-[10px]">{req.discordTag}</div>
                   </td>
-                  <td className="px-5 py-4 text-[#A8A8AF]">{req.projectType}</td>
+                  <td className="px-5 py-4">
+                    <div className="text-[#A8A8AF]">{req.projectType}</div>
+                    {req.attachments && req.attachments.length > 0 && (
+                      <div className="mt-1.5 flex flex-col gap-0.5 max-w-[200px]">
+                        {req.attachments.slice(0, 5).map((a, i) =>
+                          a.url ? (
+                            <a
+                              key={i}
+                              href={a.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] font-mono text-[#CCFF00]/80 hover:text-[#CCFF00] underline decoration-dotted truncate"
+                              title={a.name}
+                            >
+                              📎 {a.name}
+                            </a>
+                          ) : (
+                            <span key={i} className="text-[10px] font-mono text-[#6B6B72] truncate" title={a.name}>
+                              📎 {a.name}
+                            </span>
+                          )
+                        )}
+                      </div>
+                    )}
+                  </td>
                   <td className="px-5 py-4">
                     <span className={`font-mono px-2 py-0.5 rounded-full text-[10px] border ${
                       req.urgency === "rush"

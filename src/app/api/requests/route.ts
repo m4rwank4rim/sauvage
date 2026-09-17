@@ -55,6 +55,10 @@ export async function POST(req: NextRequest) {
       ? (siteConfig.services as PublicService[]).find((s) => s.id === packageId)
       : null;
 
+    const refs = Array.isArray(attachments)
+      ? attachments.filter((a: { url?: string }) => Boolean(a?.url)).slice(0, 5)
+      : [];
+
     let flow: "instant" | "manual" = "manual";
     let totalAmount: number | undefined;
     let packageName: string | undefined;
@@ -79,13 +83,29 @@ export async function POST(req: NextRequest) {
       budgetRange: displayBudget,
       urgency,
       brief,
-      attachments: attachments || [],
+      attachments: (attachments || []).map((a: { name?: string; size?: number; type?: string; url?: string }) => ({
+        name: String(a.name || "file").slice(0, 120),
+        size: Number(a.size) || 0,
+        type: String(a.type || "application/octet-stream").slice(0, 80),
+        url: a.url,
+      })),
       userId: userId || undefined,
       flow,
       totalAmount,
       packageName,
       status: flow === "instant" ? "awaiting_deposit" : "pending_quote",
     });
+
+    // Seed uploaded reference files into the project room as the opening messages
+    for (const ref of refs) {
+      await dbStore.appendMessage(newRequest.id, {
+        authorRole: "client",
+        author: clientName,
+        content: `Reference: ${String(ref.name || "file").slice(0, 120)}`,
+        attachmentUrl: ref.url,
+        attachmentName: String(ref.name || "file").slice(0, 120),
+      });
+    }
 
     if (flow === "instant" && totalAmount) {
       const deposit = half(totalAmount);
