@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck, RefreshCw, DollarSign, ClipboardList, CreditCard,
-  CheckCircle2, Clock, Package, Zap, X, ArrowRight, AlertTriangle, LogOut
+  CheckCircle2, Clock, Package, Zap, X, ArrowRight, AlertTriangle, LogOut, Trash2
 } from "lucide-react";
 import { DesignRequest, PaymentRecord } from "../../lib/types";
 
@@ -179,6 +179,18 @@ export default function AdminPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
+    loadData();
+  };
+
+  const deleteRequest = async (id: string) => {
+    if (!confirm(`Delete ${id} and all of its payments? This cannot be undone.`)) return;
+    await fetch(`/api/requests/${id}`, { method: "DELETE" });
+    loadData();
+  };
+
+  const deletePayment = async (paymentId: string) => {
+    if (!confirm(`Delete transaction ${paymentId}? This cannot be undone.`)) return;
+    await fetch(`/api/payments/${paymentId}`, { method: "DELETE" });
     loadData();
   };
 
@@ -393,6 +405,13 @@ export default function AdminPage() {
                           <X className="w-3.5 h-3.5" />
                         </button>
                       )}
+                      <button
+                        onClick={() => deleteRequest(req.id)}
+                        className="text-[#6B6B72] hover:text-red-400 transition-colors"
+                        title="Delete request"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -427,7 +446,7 @@ export default function AdminPage() {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-white/5">
-                {["Transaction ID", "Routing #", "Payer Name", "Amount", "Status", "Date"].map((h) => (
+                {["Transaction ID", "Routing #", "Payer Name", "Amount", "Status", "Date", "Actions"].map((h) => (
                   <th key={h} className="text-left px-5 py-3 text-[10px] font-mono text-[#6B6B72] uppercase tracking-wider">
                     {h}
                   </th>
@@ -456,6 +475,15 @@ export default function AdminPage() {
                   </td>
                   <td className="px-5 py-4 text-[#6B6B72] font-mono">
                     {new Date(pay.paidAt || pay.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-5 py-4">
+                    <button
+                      onClick={() => deletePayment(pay.paymentId)}
+                      className="text-[#6B6B72] hover:text-red-400 transition-colors"
+                      title="Delete transaction"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </td>
                 </tr>
               ))}

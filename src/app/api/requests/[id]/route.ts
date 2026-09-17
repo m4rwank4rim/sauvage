@@ -71,3 +71,24 @@ export async function PATCH(
     return NextResponse.json({ success: false, error: "Failed to update request." }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const guard = await requireAdmin();
+  if (!guard.authorized) return guard.response;
+
+  try {
+    const existing = await dbStore.getRequestById(params.id);
+    if (!existing) {
+      return NextResponse.json({ success: false, error: "Request not found." }, { status: 404 });
+    }
+    const paymentsDeleted = await dbStore.deletePaymentsByRequestId(params.id);
+    await dbStore.deleteRequest(params.id);
+    return NextResponse.json({ success: true, data: { id: params.id, paymentsDeleted } });
+  } catch (err) {
+    console.error("DELETE /api/requests/[id] error:", err);
+    return NextResponse.json({ success: false, error: "Failed to delete request." }, { status: 500 });
+  }
+}

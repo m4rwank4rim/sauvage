@@ -253,6 +253,22 @@ export class DatabaseStore {
     return full;
   }
 
+  async deleteRequest(id: string): Promise<boolean> {
+    if (kvBackendActive()) {
+      const existing = await this.getRequestById(id);
+      if (!existing) return false;
+      await this.kv().del(this.reqKey(id));
+      await this.kv().lrem(K_REQ_LIST, 0, id);
+      return true;
+    }
+
+    const data = this.fsLoad();
+    const before = data.requests.length;
+    data.requests = data.requests.filter((r) => r.id !== id);
+    this.fsSave(data);
+    return data.requests.length < before;
+  }
+
   // --- Payments ---
   async getAllPayments(): Promise<PaymentRecord[]> {
     if (kvBackendActive()) {
@@ -276,6 +292,32 @@ export class DatabaseStore {
   async getPaymentByRequestId(requestId: string): Promise<PaymentRecord | null> {
     const payments = kvBackendActive() ? await this.kvLoadPayments() : this.fsLoad().payments;
     return payments.find((p) => p.requestId === requestId) || null;
+  }
+
+  async deletePayment(paymentId: string): Promise<boolean> {
+    if (kvBackendActive()) {
+      const existing = await this.getPaymentById(paymentId);
+      if (!existing) return false;
+      await this.kv().del(this.payKey(paymentId));
+      await this.kv().lrem(K_PAY_LIST, 0, paymentId);
+      return true;
+    }
+
+    const data = this.fsLoad();
+    const before = data.payments.length;
+    data.payments = data.payments.filter((p) => p.paymentId !== paymentId);
+    this.fsSave(data);
+    return data.payments.length < before;
+  }
+
+  async deletePaymentsByRequestId(requestId: string): Promise<number> {
+    const payments = (kvBackendActive() ? await this.kvLoadPayments() : this.fsLoad().payments)
+      .filter((p) => p.requestId === requestId);
+    let deleted = 0;
+    for (const payment of payments) {
+      if (await this.deletePayment(payment.paymentId)) deleted += 1;
+    }
+    return deleted;
   }
 
   async savePayment(record: PaymentRecord): Promise<PaymentRecord> {
