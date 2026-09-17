@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "discord:setup": "node scripts/discord-setup.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -28,6 +29,7 @@
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
+    "discord.js": "^14.27.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.15",
     "localtunnel": "^2.0.2",

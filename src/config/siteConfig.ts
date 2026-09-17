@@ -48,7 +48,7 @@ export const siteConfig: SiteConfig = {
     operatingHours: "Monday - Sunday: 12:00 PM – 02:00 AM LS Time",
     inGameLocation: "Badger Tower Office Complex - Floor 2, Room 3",
     hotline: "19003308",
-    discordUrl: "https://discord.gg/gtaworld",
+    discordUrl: "https://discord.gg/SpYfh3VmU",
     supportEmail: "contact@sauvagecreative.ls",
   },
   howItWorks: [
