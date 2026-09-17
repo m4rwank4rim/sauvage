@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowRight, ShieldCheck, User } from "lucide-react";
@@ -47,20 +48,15 @@ export const Navbar: React.FC = () => {
         }`}
       >
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-[8px] border border-electric-lime/40 bg-electric-lime/[0.06] flex items-center justify-center transition-colors group-hover:bg-electric-lime/15">
-            <span className="font-display font-semibold italic text-sm text-electric-lime leading-none">
-              S
-            </span>
-          </div>
-          <div className="flex flex-col leading-none">
-            <span className="font-display font-medium text-lg tracking-tight text-text-primary transition-colors group-hover:text-white">
-              {siteConfig.agencyName}
-            </span>
-            <span className="hidden sm:block font-mono text-[9px] uppercase tracking-[0.28em] text-text-muted mt-1">
-              Los Santos · Est. GTAW
-            </span>
-          </div>
+        <Link href="/" className="flex items-center group" aria-label={siteConfig.agencyName}>
+          <Image
+            src="/icon.png"
+            alt={siteConfig.agencyName}
+            width={40}
+            height={40}
+            priority
+            className="h-9 w-9 md:h-10 md:w-10 object-contain transition-opacity duration-300 group-hover:opacity-80"
+          />
         </Link>
 
         {/* Desktop Nav */}
