@@ -9,7 +9,7 @@ import {
   CheckCircle2, Clock, CreditCard, Package, ArrowRight, Sparkles,
   AlertCircle, FileText, User, Zap, ExternalLink, Download, Send,
   Paperclip, Loader2, Star, ShieldCheck, MessageSquare, Landmark,
-  PartyPopper, LogIn
+  PartyPopper, LogIn, Lock
 } from "lucide-react";
 import { DesignRequest, PaymentRecord, ChatMessage } from "../../../lib/types";
 
@@ -136,7 +136,7 @@ export default function RequestDetailPage() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 15000);
+    const interval = setInterval(fetchData, 4000);
     return () => clearInterval(interval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -281,6 +281,7 @@ export default function RequestDetailPage() {
   const signedIn = sessionStatus === "authenticated";
   const balanceDue = request.balanceAmount ?? 0;
   const canPayDeposit = request.status === "awaiting_deposit" && request.depositPaymentLink;
+  const chatLocked = request.status === "completed" || request.status === "cancelled";
 
   return (
     <div className="pt-32 pb-24 md:pt-40 md:pb-32 px-6 max-w-4xl mx-auto">
@@ -672,7 +673,14 @@ export default function RequestDetailPage() {
         </div>
 
         <div className="border-t border-white/[0.06] pt-4">
-          {!signedIn ? (
+          {chatLocked ? (
+            <div className="flex items-center justify-center gap-2 rounded-xl border border-white/[0.06] bg-[#0B0B0D] px-4 py-3.5 text-xs text-[#6B6B72]">
+              <Lock className="w-3.5 h-3.5" />
+              {request.status === "cancelled"
+                ? "Chat closed — this project was cancelled."
+                : "Chat closed — this project is complete."}
+            </div>
+          ) : !signedIn ? (
             <button
               onClick={() => signIn("discord", { callbackUrl: `/request/${id}` })}
               className="w-full py-3.5 rounded-full text-sm font-bold text-[#0B0B0D] bg-[#CCFF00] hover:bg-[#B8E600] transition-all flex items-center justify-center gap-2"

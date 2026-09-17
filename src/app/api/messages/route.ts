@@ -24,6 +24,12 @@ export async function POST(req: NextRequest) {
     if (!request) {
       return NextResponse.json({ success: false, error: "Request not found." }, { status: 404 });
     }
+    if (request.status === "completed" || request.status === "cancelled") {
+      return NextResponse.json(
+        { success: false, error: "Chat is closed on this project." },
+        { status: 403 }
+      );
+    }
 
     const text = String(content || "").trim().slice(0, 2000);
 

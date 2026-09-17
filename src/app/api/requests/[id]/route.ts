@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { dbStore } from "../../../../lib/db/store";
 import { requireAdmin } from "../../../../lib/admin";
 
+export const dynamic = "force-dynamic";
+
+const json = (payload: unknown, init?: number) => {
+  const res = NextResponse.json(payload, { status: init });
+  res.headers.set("Cache-Control", "no-store, max-age=0");
+  return res;
+};
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: { id: string } }
@@ -9,14 +17,14 @@ export async function GET(
   try {
     const request = await dbStore.getRequestById(params.id);
     if (!request) {
-      return NextResponse.json({ success: false, error: "Request not found." }, { status: 404 });
+      return json({ success: false, error: "Request not found." }, 404);
     }
     const allPayments = await dbStore.getAllPayments();
     const payments = allPayments.filter((p) => p.requestId === params.id);
     const payment = payments[0] ?? null;
-    return NextResponse.json({ success: true, data: { request, payment, payments } });
+    return json({ success: true, data: { request, payment, payments } });
   } catch (err) {
-    return NextResponse.json({ success: false, error: "Failed to load request." }, { status: 500 });
+    return json({ success: false, error: "Failed to load request." }, 500);
   }
 }
 
