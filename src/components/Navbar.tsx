@@ -36,6 +36,7 @@ export const Navbar: React.FC = () => {
 
   const userLinks = session ? [
     { label: "My Projects", href: "/dashboard", icon: Package, external: false },
+    { label: "Client Portal", href: "/client", icon: ShieldCheck, external: false },
     { label: "Start Project", href: "/request", icon: ArrowRight, external: false, primary: true },
   ] : [
     { label: "Sign In", href: "/login", icon: User, external: false },
@@ -234,6 +235,14 @@ export const Navbar: React.FC = () => {
                     >
                       <Package className="w-5 h-5" />
                       <span>My Projects</span>
+                    </Link>
+                    <Link
+                      href="/client"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium text-text-secondary hover:text-electric-lime hover:bg-white/[0.04] transition-colors w-full"
+                    >
+                      <ShieldCheck className="w-5 h-5" />
+                      <span>Client Portal</span>
                     </Link>
                     <Link
                       href="/request"
