@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signIn } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck, ArrowLeft, Plus, Pencil, Trash2, Star, ChevronUp,
-  ChevronDown, X, Loader2, RefreshCw, ImageIcon
+  ChevronDown, X, Loader2, RefreshCw, ImageIcon, UploadCloud
 } from "lucide-react";
 import { PortfolioItem } from "../../../lib/types";
 import { PortfolioGraphic } from "../../../components/PortfolioGraphic";
@@ -79,7 +80,9 @@ export default function PortfolioManagerPage() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<FormState | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -127,6 +130,47 @@ export default function PortfolioManagerPage() {
       })
       .catch(() => undefined);
   }, [status, isAdmin]);
+
+  const onPickFile = (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      setMessage("Please choose an image file (PNG, JPG or WebP).");
+      return;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      setMessage("Image must be 4 MB or smaller.");
+      return;
+    }
+    setUploading(true);
+    setMessage("");
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const dataUrl = String(reader.result);
+        const base64 = dataUrl.split(",")[1] ?? "";
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120);
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileName: safeName, contentType: file.type, data: base64 }),
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          setMessage(json.error || "Upload failed.");
+        } else {
+          setForm((f) => (f ? { ...f, imageUrl: json.data.url } : f));
+        }
+      } catch {
+        setMessage("Upload failed. Please try again.");
+      } finally {
+        setUploading(false);
+      }
+    };
+    reader.onerror = () => {
+      setUploading(false);
+      setMessage("Could not read that file.");
+    };
+    reader.readAsDataURL(file);
+  };
 
   const save = async () => {
     if (!form) return;
@@ -343,8 +387,35 @@ export default function PortfolioManagerPage() {
                     <input value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })} className={inputCls} />
                   </Field>
                 </div>
+                {form.imageUrl && (
+                  <div className="relative w-full h-72 rounded-xl border border-white/10 overflow-hidden bg-[#0B0B0D]">
+                    <Image src={form.imageUrl} alt="Portfolio preview" fill unoptimized className="object-cover" />
+                  </div>
+                )}
                 <Field label="Image URL (optional — overrides generated art)">
-                  <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} className={inputCls} placeholder="https://.../design.png" />
+                  <div className="flex items-center gap-3">
+                    <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} className={`${inputCls} flex-1`} placeholder="https://.../design.png" />
+                    <button
+                      type="button"
+                      onClick={() => fileRef.current?.click()}
+                      disabled={uploading}
+                      className="shrink-0 flex items-center gap-2 px-4 py-3 rounded-xl text-xs font-semibold text-[#0B0B0D] bg-[#CCFF00] hover:bg-[#B8E600] disabled:opacity-60 transition-all"
+                    >
+                      {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+                      {uploading ? "Uploading…" : "Upload"}
+                    </button>
+                    <input
+                      ref={fileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) onPickFile(file);
+                        e.currentTarget.value = "";
+                      }}
+                    />
+                  </div>
                 </Field>
                 <Field label="Tags (comma separated)">
                   <input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} className={inputCls} placeholder="Menu, Print, Nightlife" />
