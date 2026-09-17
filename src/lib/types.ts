@@ -100,7 +100,7 @@ export interface FleecaWebhookPayload {
 export interface PortfolioItem {
   id: string;
   title: string;
-  category: "Logos" | "Print" | "Digital/Social" | "Vehicle Liveries" | "Signage" | "Other";
+  category: "Logos" | "Print" | "Digital/Social" | "Signage" | "Other";
   clientName: string;
   businessType: string;
   year: string;

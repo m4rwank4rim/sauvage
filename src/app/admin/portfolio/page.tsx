@@ -12,7 +12,7 @@ import {
 import { PortfolioItem } from "../../../lib/types";
 import { PortfolioGraphic } from "../../../components/PortfolioGraphic";
 
-const CATEGORIES = ["Logos", "Print", "Digital/Social", "Vehicle Liveries", "Signage", "Other"];
+const CATEGORIES = ["Logos", "Print", "Digital/Social", "Signage", "Other"];
 const PREVIEWS = ["logo", "menu", "digital", "signage"];
 
 type FormState = {

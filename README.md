@@ -136,16 +136,16 @@ Add a new entry like this:
 ```ts
 {
   id: "my-new-project",
-  title: "Custom Livery for LSPD",
-  category: "Vehicle Liveries",
-  clientName: "Los Santos Police Department",
-  businessType: "Law Enforcement",
+  title: "Bahama Mamas VIP Cocktail List",
+  category: "Print",
+  clientName: "Bahama Mamas West Coast",
+  businessType: "Nightclub & VIP Lounge",
   year: "2026",
-  description: "High-visibility pursuit livery...",
-  tags: ["Livery", "Police", "LSPD"],
+  description: "A premium 8-page cocktail and VIP menu...",
+  tags: ["Menu", "Print", "Nightlife"],
   featured: true,
   colorAccent: "#CCFF00",
-  previewType: "livery",
+  previewType: "menu",
 },
 ```
 

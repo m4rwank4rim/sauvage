@@ -13,7 +13,6 @@ const CATEGORIES = [
   "Logos",
   "Print",
   "Digital/Social",
-  "Vehicle Liveries",
   "Signage",
   "Other",
 ];
