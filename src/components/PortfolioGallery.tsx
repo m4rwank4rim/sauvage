@@ -26,6 +26,16 @@ export const PortfolioGallery: React.FC<{ items: PortfolioItem[] }> = ({ items }
       ? items
       : items.filter((item) => item.category === activeCategory);
 
+  const currentIndex = filteredItems.findIndex((item) => item.id === selectedItem?.id);
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex < filteredItems.length - 1 && currentIndex !== -1;
+  const onPrev = () => {
+    if (hasPrev) setSelectedItem(filteredItems[currentIndex - 1]);
+  };
+  const onNext = () => {
+    if (hasNext) setSelectedItem(filteredItems[currentIndex + 1]);
+  };
+
   return (
     <div className="pt-32 pb-24 md:pt-40 md:pb-32 px-5 md:px-8 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
@@ -138,7 +148,14 @@ export const PortfolioGallery: React.FC<{ items: PortfolioItem[] }> = ({ items }
         </div>
       )}
 
-      <LightboxModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      <LightboxModal
+        item={selectedItem}
+        onClose={() => setSelectedItem(null)}
+        onPrev={onPrev}
+        onNext={onNext}
+        hasPrev={hasPrev}
+        hasNext={hasNext}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 16 }}
