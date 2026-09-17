@@ -6,6 +6,7 @@ import { DesignRequest } from "../../lib/types";
 import { motion } from "framer-motion";
 import { ArrowRight, Package, Clock, ShieldCheck, Zap } from "lucide-react";
 import Link from "next/link";
+import { EmptyDashboard } from "../../components/EmptyState";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -57,10 +58,7 @@ export default function DashboardPage() {
       <div className="space-y-4">
         <h2 className="text-lg font-display font-bold text-[#F4F4F0] mb-4">Your Projects</h2>
         {requests.length === 0 ? (
-          <div className="text-center py-16 bg-[#141417] border border-white/[0.08] rounded-3xl">
-            <Package className="w-12 h-12 text-[#CCFF00] mx-auto mb-4 opacity-50" />
-            <p className="text-[#A8A8AF] text-sm">You have no design requests yet.</p>
-          </div>
+          <EmptyDashboard />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {requests.map((req) => (

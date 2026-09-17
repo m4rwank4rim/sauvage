@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { DesignRequest, PaymentRecord } from "../../lib/types";
 import { AdminPageSkeleton } from "../../components/Skeleton";
+import { EmptyAdminDashboard } from "../../components/EmptyState";
 import { toast } from "react-hot-toast";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -477,14 +478,7 @@ export default function AdminPage() {
             </tbody>
           </table>
 
-          {requests.length === 0 && (
-            <div className="py-12 text-center text-xs text-[#6B6B72]">
-              No design requests yet. Submit a brief via{" "}
-              <Link href="/request" className="text-[#CCFF00] hover:underline">
-                /request
-              </Link>
-            </div>
-          )}
+          {requests.length === 0 && <EmptyAdminDashboard />}
         </div>
       </div>
 

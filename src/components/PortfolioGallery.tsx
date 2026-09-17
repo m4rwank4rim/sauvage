@@ -7,6 +7,7 @@ import { Sparkles, ArrowRight, Eye } from "lucide-react";
 import { PortfolioItem } from "../lib/types";
 import { PortfolioGraphic } from "./PortfolioGraphic";
 import { LightboxModal } from "./LightboxModal";
+import { EmptyWorkArchive } from "./EmptyState";
 
 const CATEGORIES = [
   "All",
@@ -142,11 +143,7 @@ export const PortfolioGallery: React.FC<{ items: PortfolioItem[] }> = ({ items }
         </AnimatePresence>
       </motion.div>
 
-      {filteredItems.length === 0 && (
-        <div className="py-20 text-center text-sm text-text-secondary">
-          No projects in this category yet.
-        </div>
-      )}
+      {filteredItems.length === 0 && <EmptyWorkArchive />}
 
       <LightboxModal
         item={selectedItem}
