@@ -7,9 +7,11 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck, RefreshCw, DollarSign, ClipboardList, CreditCard,
-  CheckCircle2, Clock, Package, Zap, X, ArrowRight, AlertTriangle, LogOut, Trash2, Upload
+  CheckCircle2, Clock, Package, Zap, X, ArrowRight, AlertTriangle, LogOut, Trash2, Upload, Copy
 } from "lucide-react";
 import { DesignRequest, PaymentRecord } from "../../lib/types";
+import { AdminPageSkeleton } from "../../components/Skeleton";
+import { toast } from "react-hot-toast";
 
 const STATUS_COLORS: Record<string, string> = {
   pending_quote: "bg-amber-400/10 text-amber-300 border-amber-400/30",
@@ -237,6 +239,10 @@ export default function AdminPage() {
     );
   }
 
+  if (loading && requests.length === 0) {
+    return <AdminPageSkeleton />;
+  }
+
   return (
     <div className="pt-28 pb-20 px-6 max-w-7xl mx-auto">
       {/* Header */}
@@ -331,8 +337,20 @@ export default function AdminPage() {
             </thead>
             <tbody>
               {requests.map((req) => (
-                <tr key={req.id} className="border-b border-white/5 hover:bg-white/2 transition-colors">
-                  <td className="px-5 py-4 font-mono text-[#CCFF00]">{req.id}</td>
+                <tr key={req.id} className="border-b border-white/5 hover:bg-white/2 transition-colors group">
+                  <td className="px-5 py-4 font-mono text-[#CCFF00] flex items-center gap-1.5">
+                    {req.id}
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(req.id);
+                        toast.success("Copied ID");
+                      }}
+                      className="p-1 text-[#6B6B72] hover:text-[#CCFF00] transition-colors opacity-0 group-hover:opacity-100"
+                      title="Copy ID"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
+                  </td>
                   <td className="px-5 py-4">
                     <div className="text-[#F4F4F0] font-semibold">{req.clientName}</div>
                     <div className="text-[#6B6B72] text-[10px]">{req.discordTag}</div>

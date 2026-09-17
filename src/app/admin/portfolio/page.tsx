@@ -7,10 +7,28 @@ import { useSession, signIn } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck, ArrowLeft, Plus, Pencil, Trash2, Star, ChevronUp,
-  ChevronDown, X, Loader2, RefreshCw, ImageIcon, UploadCloud
+  ChevronDown, X, Loader2, RefreshCw, ImageIcon, UploadCloud, GripVertical
 } from "lucide-react";
 import { PortfolioItem } from "../../../lib/types";
 import { PortfolioGraphic } from "../../../components/PortfolioGraphic";
+import { PortfolioItemSkeleton } from "../../../components/Skeleton";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const CATEGORIES = ["Logos", "Print", "Digital/Social", "Signage", "Other"];
 const PREVIEWS = ["logo", "menu", "digital", "signage"];
@@ -242,10 +260,97 @@ export default function PortfolioManagerPage() {
     });
   };
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = items.findIndex((i) => i.id === active.id);
+      const newIndex = items.findIndex((i) => i.id === over.id);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const next = arrayMove(items, oldIndex, newIndex);
+        setItems(next);
+        await fetch("/api/portfolio/reorder", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: next.map((i) => i.id) }),
+        });
+      }
+    }
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const SortableItem = ({ item, index }: { item: PortfolioItem; index: number }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id: item.id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.5 : 1,
+    };
+
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="flex items-center gap-4 rounded-2xl bg-[#141417] border border-white/[0.08] p-3 transition-all duration-200"
+      >
+        <button
+          {...attributes}
+          {...listeners}
+          className="p-2 text-[#6B6B72] hover:text-[#CCFF00] transition-colors shrink-0 cursor-grab active:cursor-grabbing"
+          title="Drag to reorder"
+          aria-label="Drag to reorder"
+        >
+          <GripVertical className="w-5 h-5" />
+        </button>
+        <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0">
+          <PortfolioGraphic item={item} className="w-full h-full" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-[#F4F4F0] truncate">{item.title}</h3>
+            {item.featured && <Star className="w-3.5 h-3.5 text-[#CCFF00] fill-current shrink-0" />}
+            {item.imageUrl && <ImageIcon className="w-3.5 h-3.5 text-[#6B6B72] shrink-0" />}
+          </div>
+          <p className="text-[11px] text-[#A8A8AF] truncate">{item.clientName} &middot; {item.category} &middot; {item.year}</p>
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <button onClick={() => toggleFeatured(item)} className={`p-2 transition-colors ${item.featured ? "text-[#CCFF00]" : "text-[#6B6B72] hover:text-[#CCFF00]"}`} title="Toggle featured">
+            <Star className={`w-4 h-4 ${item.featured ? "fill-current" : ""}`} />
+          </button>
+          <button onClick={() => { setForm(toForm(item)); setMessage(""); }} className="p-2 text-[#6B6B72] hover:text-[#F4F4F0] transition-colors" title="Edit">
+            <Pencil className="w-4 h-4" />
+          </button>
+          <button onClick={() => remove(item)} className="p-2 text-[#6B6B72] hover:text-red-400 transition-colors" title="Delete">
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 rounded-full border-4 border-white/[0.08] border-t-[#CCFF00] animate-spin" />
+      <div className="pt-28 pb-20 px-6 max-w-6xl mx-auto animate-pulse space-y-3">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <PortfolioItemSkeleton key={i} />
+        ))}
       </div>
     );
   }
@@ -297,45 +402,27 @@ export default function PortfolioManagerPage() {
 
       {message && <p className="text-xs text-red-400 mb-4">{message}</p>}
 
-      <div className="space-y-3">
-        {items.map((item, index) => (
-          <div key={item.id} className="flex items-center gap-4 rounded-2xl bg-[#141417] border border-white/[0.08] p-3">
-            <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0">
-              <PortfolioGraphic item={item} className="w-full h-full" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold text-[#F4F4F0] truncate">{item.title}</h3>
-                {item.featured && <Star className="w-3.5 h-3.5 text-[#CCFF00] fill-current shrink-0" />}
-                {item.imageUrl && <ImageIcon className="w-3.5 h-3.5 text-[#6B6B72] shrink-0" />}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={items.map((i) => i.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-3">
+            {items.map((item, index) => (
+              <SortableItem key={item.id} item={item} index={index} />
+            ))}
+            {items.length === 0 && (
+              <div className="py-16 text-center text-sm text-[#6B6B72]">
+                No portfolio items yet. Click &ldquo;New Item&rdquo; to add one.
               </div>
-              <p className="text-[11px] text-[#A8A8AF] truncate">{item.clientName} · {item.category} · {item.year}</p>
-            </div>
-            <div className="flex items-center gap-1 shrink-0">
-              <button onClick={() => move(index, -1)} disabled={index === 0} className="p-2 text-[#6B6B72] hover:text-[#F4F4F0] disabled:opacity-30 transition-colors" title="Move up">
-                <ChevronUp className="w-4 h-4" />
-              </button>
-              <button onClick={() => move(index, 1)} disabled={index === items.length - 1} className="p-2 text-[#6B6B72] hover:text-[#F4F4F0] disabled:opacity-30 transition-colors" title="Move down">
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              <button onClick={() => toggleFeatured(item)} className={`p-2 transition-colors ${item.featured ? "text-[#CCFF00]" : "text-[#6B6B72] hover:text-[#CCFF00]"}`} title="Toggle featured">
-                <Star className={`w-4 h-4 ${item.featured ? "fill-current" : ""}`} />
-              </button>
-              <button onClick={() => { setForm(toForm(item)); setMessage(""); }} className="p-2 text-[#6B6B72] hover:text-[#F4F4F0] transition-colors" title="Edit">
-                <Pencil className="w-4 h-4" />
-              </button>
-              <button onClick={() => remove(item)} className="p-2 text-[#6B6B72] hover:text-red-400 transition-colors" title="Delete">
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
+            )}
           </div>
-        ))}
-        {items.length === 0 && !loading && (
-          <div className="py-16 text-center text-sm text-[#6B6B72]">
-            No portfolio items yet. Click “New Item” to add one.
-          </div>
-        )}
-      </div>
+        </SortableContext>
+</DndContext>
 
       <AnimatePresence>
         {form && (

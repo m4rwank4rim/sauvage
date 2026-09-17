@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Upload, CheckCircle2, X, Sparkles, FileEdit, Zap, Landmark } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { siteConfig } from "../../config/siteConfig";
+import { toast } from "react-hot-toast";
 
 const PROJECT_TYPES = [
   "Logo & Identity",
@@ -50,7 +51,6 @@ function RequestPageInner() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [attachments, setAttachments] = React.useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = React.useState<"" | "uploading" | "failed">("");
-  const [formError, setFormError] = React.useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fileToBase64 = (file: File): Promise<string> =>
@@ -142,11 +142,10 @@ function RequestPageInner() {
 
   const onSubmit = async (data: RequestFormValues) => {
     if (!selectedServiceId && !deposit) {
-      setFormError("Choose a package or enter a budget so we can charge your 50% deposit instantly.");
+      toast.error("Choose a package or enter a budget so we can charge your 50% deposit instantly.");
       return;
     }
     setIsSubmitting(true);
-    setFormError("");
 
     try {
       // Upload reference files for real — they land in the project room as the opening messages
@@ -156,7 +155,7 @@ function RequestPageInner() {
         for (const file of attachments) {
           if (file.size > 4 * 1024 * 1024) {
             setUploadProgress("failed");
-            setFormError(`"${file.name}" is over the 4 MB limit.`);
+            toast.error(`"${file.name}" is over the 4 MB limit.`);
             setIsSubmitting(false);
             return;
           }
@@ -169,7 +168,7 @@ function RequestPageInner() {
           const json = await res.json();
           if (!res.ok || !json?.data?.url) {
             setUploadProgress("failed");
-            setFormError(json?.error || `Could not upload "${file.name}".`);
+            toast.error(json?.error || `Could not upload "${file.name}".`);
             setIsSubmitting(false);
             return;
           }
@@ -197,17 +196,18 @@ function RequestPageInner() {
 
       const json = await res.json();
       if (json.success && json.data?.id) {
+        toast.success("Brief submitted — opening your project room!");
         if (json.payment?.payment_link) {
           window.location.href = json.payment.payment_link;
         } else {
           router.push(`/request/${json.data.id}`);
         }
       } else {
-        setFormError(json.error || "Submission failed. Please try again.");
+        toast.error(json.error || "Submission failed. Please try again.");
         setIsSubmitting(false);
       }
     } catch {
-      setFormError("Network error. Please try again.");
+      toast.error("Network error. Please try again.");
       setIsSubmitting(false);
     }
   };
@@ -359,8 +359,6 @@ function RequestPageInner() {
                   due now via Fleeca Bank. Remaining ${(total! - deposit).toLocaleString()} is paid when you accept the finished work.
                 </div>
               </div>
-            ) : formError ? (
-              <p className="text-xs text-red-400">{formError}</p>
             ) : (
               <div className="flex items-center gap-3 rounded-xl bg-[#0B0B0D] border border-white/[0.08] p-4">
                 <Zap className="w-5 h-5 text-[#CCFF00] shrink-0" />

@@ -13,6 +13,7 @@ import {
   PartyPopper, LogIn, Lock
 } from "lucide-react";
 import { DesignRequest, PaymentRecord, ChatMessage } from "../../../lib/types";
+import { RequestDetailSkeleton } from "../../../components/Skeleton";
 
 type StageKey = "brief" | "deposit" | "production" | "review" | "done";
 
@@ -273,11 +274,7 @@ export default function RequestDetailPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 rounded-full border-4 border-white/[0.08] border-t-[#CCFF00] animate-spin" />
-      </div>
-    );
+    return <RequestDetailSkeleton />;
   }
 
   if (error || !request) {

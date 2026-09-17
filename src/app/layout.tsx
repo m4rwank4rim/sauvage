@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 import { siteConfig } from "../config/siteConfig";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -48,6 +49,34 @@ export default function RootLayout({
           <Navbar />
           <main className="flex-grow">{children}</main>
           <Footer />
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: "#0B0B0D",
+                color: "#FAFAFA",
+                border: "1px solid #CCFF00",
+                borderRadius: "12px",
+                padding: "14px 16px",
+                fontSize: "13px",
+                fontFamily: "var(--font-inter)",
+                boxShadow: "0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(204,255,0,0.1)",
+              },
+              success: {
+                iconTheme: {
+                  primary: "#CCFF00",
+                  secondary: "#0B0B0D",
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: "#FF5C5C",
+                  secondary: "#0B0B0D",
+                },
+              },
+            }}
+          />
         </NextAuthProvider>
       </body>
     </html>
