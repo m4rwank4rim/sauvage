@@ -32,7 +32,7 @@
         { "name": "showcase", "type": "text", "topic": "Proud of a design from us? Show it off here." },
         { "name": "off-topic", "type": "text", "topic": "Out-of-character lounge. Chill, memes, and nonsense." },
         { "name": "suggestions", "type": "text", "topic": "Drop ideas for the studio, the site, or new service packages." },
-        { "name": "lounge", "type": "voice", "topic": "Open mic lounge." },
+        { "name": "lounge", "type": "voice", "topic": "Voice lounge for clients and community." },
         { "name": "gaming", "type": "voice", "topic": "FiveM / GTAW sessions and general gaming." }
       ]
     },

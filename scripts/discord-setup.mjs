@@ -118,7 +118,7 @@ const ensureRoles = async (guild) => {
     }
     const role = await guild.roles.create({
       name: cfg.name,
-      color: toInt(cfg.color),
+      colors: [toInt(cfg.color)],
       hoist: Boolean(cfg.hoist),
       mentionable: Boolean(cfg.mentionable),
       permissions: toPermissions(cfg.permissions),
@@ -148,16 +148,23 @@ const ensureChannel = async (guild, cfg, roleMap, parent) => {
     console.log(`channel reuse: ${parent?.name ?? "-"} / #${cfg.name}`);
     return existing;
   }
-  const created = await guild.channels.create({
-    name: cfg.name,
-    type: channelType(cfg.type),
-    parent: parent?.id,
-    topic: cfg.topic,
-    permissionOverwrites: overwrites.length ? overwrites : undefined,
-    reason: "SAUVAGE template setup",
-  });
-  console.log(`channel made: ${parent?.name ?? "-"} / #${cfg.name} (${access})`);
-  return created;
+  try {
+    const created = await guild.channels.create({
+      name: cfg.name,
+      type: channelType(cfg.type),
+      parent: parent?.id,
+      topic: cfg.type === "voice" ? undefined : cfg.topic,
+      permissionOverwrites: overwrites.length ? overwrites : undefined,
+      reason: "SAUVAGE template setup",
+    });
+    console.log(`channel made: ${parent?.name ?? "-"} / #${cfg.name} (${access})`);
+    return created;
+  } catch (err) {
+    console.warn(
+      `channel FAILED: ${parent?.name ?? "-"} / #${cfg.name} — ${err.message} details=${JSON.stringify(err?.rawError?.errors)}`
+    );
+    return null;
+  }
 };
 
 const ensureCategories = async (guild, roleMap) => {
@@ -182,6 +189,9 @@ const ensureCategories = async (guild, roleMap) => {
       .children.cache.forEach(async (child) => {
         await child.lockPermissions();
       });
+    for (const ch of cat.channels) {
+      await ensureChannel(guild, ch, roleMap, category);
+    }
     created[cat.name] = category;
   }
   return created;
