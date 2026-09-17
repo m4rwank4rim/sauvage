@@ -40,12 +40,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Editorial serif display faces */
+/* Bold extended display faces */
 h1,
 h2,
 h3 {
-  font-family: var(--font-display), Georgia, serif;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 ::selection {

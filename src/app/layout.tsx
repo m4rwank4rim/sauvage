@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Fraunces } from "next/font/google";
+import { Inter, Syne } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
@@ -13,11 +13,9 @@ const inter = Inter({
   display: "swap",
 });
 
-const fraunces = Fraunces({
+const syne = Syne({
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz"],
-  weight: "variable",
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-display",
   display: "swap",
 });
@@ -44,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${fraunces.variable} scroll-smooth`}>
+    <html lang="en" className={`${inter.variable} ${syne.variable} scroll-smooth`}>
       <body className="bg-background text-text-primary antialiased selection:bg-electric-lime selection:text-background flex flex-col min-h-screen">
         <NextAuthProvider>
           <Navbar />
