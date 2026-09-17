@@ -45,6 +45,7 @@ export type BlobProbeResult = {
   tokenMask?: string;
   writeOk?: boolean;
   writeRoundtripMs?: number;
+  envPresent?: boolean;
   error?: string;
 };
 
@@ -60,7 +61,14 @@ const storeIdHint = (t?: string) => {
 const BUFFER_SAFE = (b: Buffer) => b.byteLength <= 4 * 1024 * 1024;
 
 export async function blobProbe(writeTest = false): Promise<BlobProbeResult> {
-  if (!blobConfigured()) return { configured: false };
+  if (!blobConfigured()) {
+    return {
+      configured: false,
+      storeIdHint: storeIdHint(TOKEN),
+      tokenMask: maskToken(TOKEN),
+      envPresent: Boolean(TOKEN),
+    };
+  }
   try {
     if (writeTest) {
       const probeBody = "blob-probe-" + Date.now();
