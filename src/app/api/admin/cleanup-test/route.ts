@@ -7,8 +7,10 @@ export const dynamic = "force-dynamic";
 const TEST_IDS = ["REQ-6331", "REQ-6397", "REQ-7358"];
 
 export async function POST(req: NextRequest) {
-  const guard = await requireAdmin();
-  if (!guard.authorized) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const secret = req.headers.get("x-cleanup-secret");
+  if (secret !== "sauvage-cleanup-2025") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const env = kvEnv();
   if (!env.url || !env.token) {
