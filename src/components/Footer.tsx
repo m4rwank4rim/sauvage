@@ -123,7 +123,7 @@ export const Footer: React.FC = () => {
               Studio Updates
             </h4>
             <p className="text-xs text-text-secondary leading-relaxed">
-              Receive notifications for slot availability, flash livery sales, and holiday package
+              Receive notifications for slot availability, flash sales, and holiday package
               discounts.
             </p>
 

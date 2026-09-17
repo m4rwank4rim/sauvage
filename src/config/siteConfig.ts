@@ -145,7 +145,7 @@ export const siteConfig: SiteConfig = {
     {
       question: "What is your typical turnaround time?",
       answer:
-        "Most standard logos and menus are delivered within 24 to 48 hours from deposit confirmation. Comprehensive brand packages and multi-vehicle fleet liveries typically take 2 to 4 days. If you have an urgent grand opening, rush delivery (<24h) is available.",
+        "Most standard logos and menus are delivered within 24 to 48 hours from deposit confirmation. Comprehensive brand packages typically take 2 to 4 days. If you have an urgent grand opening, rush delivery (<24h) is available.",
     },
     {
       question: "What happens if I need revisions?",
