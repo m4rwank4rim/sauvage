@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight, CheckCircle2, Landmark } from "lucide-react";
 import { siteConfig } from "../config/siteConfig";
 import { PORTFOLIO_ITEMS } from "../data/portfolio";
+import { PortfolioItem } from "../lib/types";
 import { PortfolioGraphic } from "./PortfolioGraphic";
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
@@ -17,9 +18,10 @@ type LatestPayment = {
   paidAt: string | null;
 };
 
-export const HeroSection: React.FC = () => {
-  const [primary, secondary, tertiary] = PORTFOLIO_ITEMS;
-  const featured = PORTFOLIO_ITEMS[0] ?? primary;
+export const HeroSection: React.FC<{ items?: PortfolioItem[] }> = ({ items }) => {
+  const list = items && items.length ? items : PORTFOLIO_ITEMS;
+  const [primary, secondary, tertiary] = list;
+  const featured = list.find((i) => i.featured) ?? list[0] ?? primary;
   const [latest, setLatest] = useState<LatestPayment | null>(null);
 
   useEffect(() => {

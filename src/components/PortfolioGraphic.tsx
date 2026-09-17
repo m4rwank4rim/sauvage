@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { PortfolioItem } from "../lib/types";
 
 interface PortfolioGraphicProps {
@@ -14,6 +15,21 @@ export const PortfolioGraphic: React.FC<PortfolioGraphicProps> = ({
   className = "",
   isHero = false,
 }) => {
+  if (item.imageUrl) {
+    return (
+      <div className={`relative w-full h-full overflow-hidden bg-[#0B0B0D] ${className}`}>
+        <Image
+          src={item.imageUrl}
+          alt={item.title}
+          fill
+          unoptimized
+          sizes={isHero ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, 33vw"}
+          className="object-cover"
+        />
+      </div>
+    );
+  }
+
   switch (item.id) {
     case "lsc-performance":
       return (

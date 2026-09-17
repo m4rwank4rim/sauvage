@@ -27,9 +27,12 @@ const HEIGHTS = [
   "h-64 md:h-72",
 ];
 
-export const FeaturedWork: React.FC = () => {
+export const FeaturedWork: React.FC<{ items?: PortfolioItem[] }> = ({ items }) => {
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
-  const featuredPieces = PORTFOLIO_ITEMS.slice(0, 6);
+  const source = items && items.length ? items : PORTFOLIO_ITEMS;
+  const featuredPieces = [...source]
+    .sort((a, b) => Number(b.featured) - Number(a.featured))
+    .slice(0, 6);
 
   return (
     <section className="max-w-7xl mx-auto px-5 md:px-8 py-20 md:py-28 relative">

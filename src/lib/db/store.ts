@@ -1,12 +1,15 @@
 import fs from "fs";
 import path from "path";
 import { Redis } from "@upstash/redis";
-import { DesignRequest, PaymentRecord, RequestStatus, Review, ChatMessage } from "../types";
+import { DesignRequest, PaymentRecord, RequestStatus, Review, ChatMessage, PortfolioItem } from "../types";
+import { PORTFOLIO_ITEMS } from "../../data/portfolio";
 
 interface DatabaseSchema {
   requests: DesignRequest[];
   payments: PaymentRecord[];
   reviews: Review[];
+  portfolio?: PortfolioItem[];
+  portfolioInit?: boolean;
 }
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -16,6 +19,8 @@ const LEGACY_KEY = "agency:db";
 const K_REQ_LIST = "agency:reqs";
 const K_PAY_LIST = "agency:pays";
 const K_REV_LIST = "agency:reviews";
+const K_WORK_LIST = "agency:portfolio";
+const K_WORK_INIT = "agency:portfolio:init";
 const K_INIT = "agency:init";
 
 const kvEnv = (): { url: string | undefined; token: string | undefined } => {
@@ -54,6 +59,7 @@ export class DatabaseStore {
   private reqKey = (id: string): string => `agency:req:${id}`;
   private payKey = (id: string): string => `agency:pay:${id}`;
   private revKey = (id: string): string => `agency:rev:${id}`;
+  private workKey = (id: string): string => `agency:work:${id}`;
 
   private async ensureInitialized(): Promise<void> {
     if ((await this.kv().setnx(K_INIT, "1")) !== 1) return;
@@ -141,6 +147,8 @@ export class DatabaseStore {
         requests: parsed.requests || [],
         payments: parsed.payments || [],
         reviews: parsed.reviews || [],
+        portfolio: parsed.portfolio || [],
+        portfolioInit: parsed.portfolioInit ?? false,
       };
     } catch (err) {
       console.error("Failed to read store:", err);
@@ -440,6 +448,122 @@ export class DatabaseStore {
 
     this.fsSave(data);
     return { payment, request };
+  }
+
+  // --- Portfolio ---
+  private async ensurePortfolioInitialized(): Promise<void> {
+    if ((await this.kv().setnx(K_WORK_INIT, "1")) !== 1) return;
+    try {
+      for (const item of PORTFOLIO_ITEMS) {
+        await this.kv().set(this.workKey(item.id), JSON.stringify(item));
+        await this.kv().rpush(K_WORK_LIST, item.id);
+      }
+    } catch (err) {
+      console.error("Failed to seed portfolio:", err);
+    }
+  }
+
+  private async kvLoadPortfolio(): Promise<PortfolioItem[]> {
+    await this.ensurePortfolioInitialized();
+    const ids = await this.kv().lrange<string>(K_WORK_LIST, 0, -1);
+    if (!ids) return [];
+    const seen = new Set<string>();
+    const out: PortfolioItem[] = [];
+    for (const id of ids) {
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const item = await this.kv().get<PortfolioItem>(this.workKey(id));
+      if (item) out.push(item);
+    }
+    return out;
+  }
+
+  async getAllPortfolio(): Promise<PortfolioItem[]> {
+    if (kvBackendActive()) return this.kvLoadPortfolio();
+
+    const data = this.fsLoad();
+    if (!data.portfolioInit && (data.portfolio ?? []).length === 0) {
+      data.portfolio = [...PORTFOLIO_ITEMS];
+      data.portfolioInit = true;
+      this.fsSave(data);
+    }
+    return data.portfolio ?? [];
+  }
+
+  async getPortfolioItemById(id: string): Promise<PortfolioItem | null> {
+    if (kvBackendActive()) {
+      await this.ensurePortfolioInitialized();
+      return (await this.kv().get<PortfolioItem>(this.workKey(id))) ?? null;
+    }
+    const items = await this.getAllPortfolio();
+    return items.find((i) => i.id === id) || null;
+  }
+
+  async createPortfolioItem(input: Omit<PortfolioItem, "id">): Promise<PortfolioItem> {
+    const id = `work-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+    const item: PortfolioItem = { ...input, id };
+
+    if (kvBackendActive()) {
+      await this.ensurePortfolioInitialized();
+      await this.kv().set(this.workKey(id), JSON.stringify(item));
+      await this.kv().lpush(K_WORK_LIST, id);
+      return item;
+    }
+
+    const data = this.fsLoad();
+    data.portfolio = [item, ...(data.portfolio ?? [])];
+    this.fsSave(data);
+    return item;
+  }
+
+  async updatePortfolioItem(id: string, updates: Partial<PortfolioItem>): Promise<PortfolioItem | null> {
+    if (kvBackendActive()) {
+      const existing = await this.getPortfolioItemById(id);
+      if (!existing) return null;
+      const updated = { ...existing, ...updates, id };
+      await this.kv().set(this.workKey(id), JSON.stringify(updated));
+      return updated;
+    }
+
+    const data = this.fsLoad();
+    const list = data.portfolio ?? [];
+    const index = list.findIndex((i) => i.id === id);
+    if (index === -1) return null;
+    list[index] = { ...list[index], ...updates, id };
+    data.portfolio = list;
+    this.fsSave(data);
+    return list[index];
+  }
+
+  async deletePortfolioItem(id: string): Promise<boolean> {
+    if (kvBackendActive()) {
+      const existing = await this.getPortfolioItemById(id);
+      if (!existing) return false;
+      await this.kv().del(this.workKey(id));
+      await this.kv().lrem(K_WORK_LIST, 0, id);
+      return true;
+    }
+
+    const data = this.fsLoad();
+    const before = (data.portfolio ?? []).length;
+    data.portfolio = (data.portfolio ?? []).filter((i) => i.id !== id);
+    this.fsSave(data);
+    return data.portfolio.length < before;
+  }
+
+  async reorderPortfolio(ids: string[]): Promise<PortfolioItem[]> {
+    if (kvBackendActive()) {
+      await this.ensurePortfolioInitialized();
+      await this.kv().del(K_WORK_LIST);
+      if (ids.length) await this.kv().rpush(K_WORK_LIST, ...ids);
+      return this.kvLoadPortfolio();
+    }
+
+    const data = this.fsLoad();
+    const byId = new Map((data.portfolio ?? []).map((i) => [i.id, i]));
+    data.portfolio = ids.map((id) => byId.get(id)).filter(Boolean) as PortfolioItem[];
+    this.fsSave(data);
+    return data.portfolio;
   }
 
   // --- Reviews ---

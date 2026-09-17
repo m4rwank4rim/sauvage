@@ -6,12 +6,17 @@ import { FeaturedWork } from "../components/FeaturedWork";
 import { PricingSection } from "../components/PricingSection";
 import { TestimonialsStrip } from "../components/TestimonialsStrip";
 import { FaqAccordion } from "../components/FaqAccordion";
+import { dbStore } from "../lib/db/store";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const items = await dbStore.getAllPortfolio();
+
   return (
     <div className="relative">
       {/* 1. Hero Section */}
-      <HeroSection />
+      <HeroSection items={items} />
 
       {/* 2. Trust & Stat Bar */}
       <StatsBar />
@@ -20,7 +25,7 @@ export default function HomePage() {
       <HowItWorks />
 
       {/* 4. Featured Portfolio Showcase */}
-      <FeaturedWork />
+      <FeaturedWork items={items} />
 
       {/* 5. Services & Pricing Tiers */}
       <PricingSection />
