@@ -1,7 +1,8 @@
 const TOKEN = process.env.BLOB_READ_WRITE_TOKEN || "";
+const STORE_ID = process.env.BLOB_STORE_ID || "";
 
 export function blobConfigured(): boolean {
-  return Boolean(TOKEN);
+  return Boolean(TOKEN || STORE_ID);
 }
 
 export async function blobUpload(
@@ -9,7 +10,7 @@ export async function blobUpload(
   buffer: Buffer,
   contentType: string
 ): Promise<{ url: string; fileName: string }> {
-  if (!TOKEN) throw new Error("Blob storage is not configured.");
+  if (!blobConfigured()) throw new Error("Blob storage is not configured.");
   if (!BUFFER_SAFE(buffer)) throw new Error("File too large (max 4 MB).");
 
   const { put } = await import("@vercel/blob");
@@ -24,7 +25,7 @@ export async function blobUpload(
 }
 
 export async function blobProxyDownload(fileName: string): Promise<Response> {
-  if (!TOKEN) return new Response("Storage not configured", { status: 503 });
+  if (!blobConfigured()) return new Response("Storage not configured", { status: 503 });
   const { list } = await import("@vercel/blob");
   const { blobs } = await list({ prefix: fileName, limit: 1 });
   const hit = blobs?.[0];
