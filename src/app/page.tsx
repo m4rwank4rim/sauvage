@@ -1,6 +1,5 @@
 import React from "react";
 import { HeroSection } from "../components/HeroSection";
-import { StatsBar } from "../components/StatsBar";
 import { HowItWorks } from "../components/HowItWorks";
 import { FeaturedWork } from "../components/FeaturedWork";
 import { PricingSection } from "../components/PricingSection";
@@ -18,22 +17,19 @@ export default async function HomePage() {
       {/* 1. Hero Section */}
       <HeroSection items={items} />
 
-      {/* 2. Trust & Stat Bar */}
-      <StatsBar />
-
-      {/* 3. How It Works (4 numbered steps) */}
+      {/* 2. How It Works (4 numbered steps) */}
       <HowItWorks />
 
-      {/* 4. Featured Portfolio Showcase */}
+      {/* 3. Featured Portfolio Showcase */}
       <FeaturedWork items={items} />
 
-      {/* 5. Services & Pricing Tiers */}
+      {/* 4. Services & Pricing Tiers */}
       <PricingSection />
 
-      {/* 6. In-Character Testimonials Strip */}
+      {/* 5. In-Character Testimonials Strip */}
       <TestimonialsStrip />
 
-      {/* 7. FAQ Accordion */}
+      {/* 6. FAQ Accordion */}
       <FaqAccordion />
     </div>
   );
