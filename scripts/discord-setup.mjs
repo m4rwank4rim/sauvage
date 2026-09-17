@@ -197,31 +197,55 @@ const ensureCategories = async (guild, roleMap) => {
   return created;
 };
 
+const buildEmbeds = (embeds) =>
+  (embeds || []).map(
+    (e) =>
+      new EmbedBuilder()
+        .setColor(toInt(e.color || "#CCFF00"))
+        .setTitle(e.title)
+        .setDescription(e.description || null)
+        .addFields(
+          (e.fields || []).map((f) => ({
+            name: f.name,
+            value: f.value,
+            inline: Boolean(f.inline),
+          }))
+        )
+        .setFooter({ text: e.footer?.text || template.guildName })
+  );
+
 const postMessages = async (guild, categories) => {
   for (const [channelName, payload] of Object.entries(template.messages || {})) {
     let channel = null;
     for (const cat of Object.values(categories)) {
-      channel =
-        cat.children.cache.find((c) => c.name === channelName) ?? null;
+      channel = cat.children.cache.find((c) => c.name === channelName) ?? null;
       if (channel) break;
     }
     if (!channel) continue;
-    const messages = await channel.messages.fetch({ limit: 5 });
-    if (messages.some((m) => m.author.id === client.user.id)) {
-      console.log(`message skip : #${channelName} (already posted)`);
+
+    const history = await channel.messages.fetch({ limit: 25 });
+    if (history.some((m) => m.pinned && m.author.id === client.user.id)) {
+      console.log(`pin skip    : #${channelName} (already pinned)`);
       continue;
     }
-    if (channelName === "welcome") {
-      const embed = new EmbedBuilder()
-        .setColor(toInt("#CCFF00"))
-        .setTitle("SAUVAGE\u2122 \u2014 Los Santos Creative Agency")
-        .setDescription(payload.content)
-        .setFooter({ text: `${template.guildName}` });
-      await channel.send({ embeds: [embed] });
-    } else {
-      await channel.send(payload.content);
+
+    const sent = [];
+    if (payload.content) sent.push(await channel.send(payload.content));
+    const embeds = buildEmbeds(payload.embeds || []);
+    if (embeds.length) sent.push(await channel.send({ embeds }));
+
+    const target = sent[0];
+    if (payload.pin && target) {
+      await target.pin();
     }
-    console.log(`message posted: #${channelName}`);
+
+    for (const m of history.values()) {
+      if (m.author.id === client.user.id && !m.pinned) {
+        await m.delete().catch(() => undefined);
+      }
+    }
+
+    console.log(`message posted + pinned: #${channelName} (${embeds.length} embed${embeds.length === 1 ? "" : "s"})`);
   }
 };
 

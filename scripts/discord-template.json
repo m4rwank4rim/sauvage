@@ -85,16 +85,122 @@
   ],
   "messages": {
     "welcome": {
-      "content": "> Welcome to **SAUVAGE\u2122** \u2014 Los Santos' premier brand & visual identity studio.\n\nStep 1 \u2192 read #rules\nStep 2 \u2192 say hi in #introductions\nStep 3 \u2192 read #how-to-order and place your first commission\n\nNeed a quote for a custom brief? Ping @Client Relations to open a ticket."
+      "pin": true,
+      "embeds": [
+        {
+          "title": "Welcome to SAUVAGE\u2122",
+          "color": "#CCFF00",
+          "description": "Los Santos' premier brand & visual identity studio. Logos, menus, signage, social kits and full business identities for GTA World enterprises, paid in in-game dollars via Fleeca.\n\n**Start here:**\n1. Read #rules\n2. Say hi in #introductions\n3. Order in #how-to-order",
+          "fields": [
+            { "name": "\ud83d\udee0\ufe0f Need a design?", "value": "Browse #pricing or tell us your brief in #open-a-ticket.", "inline": false },
+            { "name": "\ud83d\udcac Talk to the team", "value": "Ping @Client Relations to open a new order or ask a question.", "inline": false },
+            { "name": "\ud83d\udd12 Verified clients", "value": "Get the **Verified Client** role after your first deposit to unlock the CLIENT AREA.", "inline": false },
+            { "name": "\ud83c\udf10 Orders & payments", "value": "Deposits and balances are moved through the **Fleeca gateway** on sauvagecreative.ls \u2014 no real currency, ever.", "inline": false }
+          ]
+        }
+      ]
     },
     "rules": {
-      "content": "**\u2014 STUDIO RULES \u2014**\n\n1. **Be in character** in all business and community channels.\n2. **No spam, scams, or advertisement** of competing services.\n3. **Respect the team and your fellow clients.**\n4. **Orders are paid in GTA World in-game dollars** via the Fleeca gateway. No real currency, ever.\n5. **Vouches require proof** of a completed order.\n6. **Follow staff instructions** \u2014 ignoring staff gets you removed.\n\nViolations are reviewed and escalated by Management."
+      "pin": true,
+      "embeds": [
+        {
+          "title": "\ud83d\udcdc Studio Rules",
+          "color": "#CCFF00",
+          "description": "Keep this server clean. Breaking a rule can get you warned or removed.",
+          "fields": [
+            { "name": "1 \u2014 Stay in character", "value": "All business and community channels are in-character and set in Los Santos.", "inline": false },
+            { "name": "2 \u2014 No spam or scams", "value": "No advertisements, referral spam, or competing service promotion.", "inline": false },
+            { "name": "3 \u2014 Respect people", "value": "Harassment, hate speech, or drama gets you removed fast.", "inline": false },
+            { "name": "4 \u2014 In-game currency only", "value": "All work is paid in GTA World dollars via Fleeca. We never ask for real money.", "inline": false },
+            { "name": "5 \u2014 Vouches need proof", "value": "Testimonials require a verified completed order reference.", "inline": false },
+            { "name": "6 \u2014 Follow staff", "value": "Staff instructions in tickets and channels are final.", "inline": false }
+          ],
+          "footer": { "text": "Questions? Ping @Client Relations." }
+        }
+      ]
     },
     "how-to-order": {
-      "content": "**\u2014 HOW TO ORDER \u2014**\n\n1. Pick a package in #pricing or submit a custom brief on the website.\n2. Ping **@Client Relations** in #open-a-ticket with your business name and idea.\n3. Pay your 50% deposit through the Fleeca gateway \u2014 instantly confirmed.\n4. Track your project in the CLIENT AREA; get updates in #design-updates.\n5. Accept the final delivery, pay the balance, and leave a vouch."
+      "pin": true,
+      "embeds": [
+        {
+          "title": "\ud83c\udfa8 How to Order a Design",
+          "color": "#CCFF00",
+          "description": "From idea to download in six steps:",
+          "fields": [
+            { "name": "1 \u2014 Pick a package", "value": "Choose **Logo**, **Complete Brand Kit**, or **Menus & Collateral** in #pricing.", "inline": false },
+            { "name": "2 \u2014 Tell us your brief", "value": "Open a ticket in #open-a-ticket with your business name, concept, and deliverables.", "inline": false },
+            { "name": "3 \u2014 Send your references", "value": "Attach logos, colour palettes, or examples you want us to match.", "inline": false },
+            { "name": "4 \u2014 Pay 50% deposit", "value": "Instant payment through the **Fleeca gateway** confirms your slot and opens your project.", "inline": false },
+            { "name": "5 \u2014 Track your project", "value": "Get progress in #design-updates and review deliveries in the CLIENT AREA.", "inline": false },
+            { "name": "6 \u2014 Accept & download", "value": "Happy with the result? Accept, pay the balance, download your files, and leave a vouch.", "inline": false }
+          ],
+          "footer": { "text": "Custom briefs are quoted within 12 hours." }
+        }
+      ]
     },
     "open-a-ticket": {
-      "content": "To start an order, reply here with:\n\n- **Business name**\n- **Package or custom brief**\n- **Discord tag** you used on the website\n\nA member of @Client Relations will pick it up."
+      "pin": true,
+      "embeds": [
+        {
+          "title": "\ud83c\udf9f Start Your Order",
+          "color": "#CCFF00",
+          "description": "Reply here to open an order. Include:",
+          "fields": [
+            { "name": "Business name", "value": "The enterprise the design is for.", "inline": true },
+            { "name": "Package / brief", "value": "Which package from #pricing, or a custom description.", "inline": true },
+            { "name": "Your Discord tag", "value": "The tag you used on the website (sauvagecreative.ls).", "inline": true }
+          ],
+          "footer": { "text": "A member of @Client Relations will pick up your ticket." }
+        }
+      ]
+    },
+    "pricing": {
+      "pin": true,
+      "embeds": [
+        {
+          "title": "\ud83d\udcb0 Current Packages",
+          "color": "#CCFF00",
+          "description": "All prices are **GTA World in-game dollars** ($), paid in two instalments via Fleeca \u2014 50% to start, 50% on acceptance.",
+          "fields": [
+            { "name": "Logo & Visual Emblem \u2014 $15,000", "value": "Primary logo + transparent PNGs, monochrome badges, SVG master, 2 revisions. ~24-48h", "inline": false },
+            { "name": "Complete Brand Kit \u2014 $35,000", "value": "Logo suite, letterhead & invoice, business cards, Facebrowser banners, forum thread code, 3 revisions. ~2-4 days", "inline": false },
+            { "name": "Menus, Cards & Collateral \u2014 $20,000", "value": "Menus, VIP cards, flyers, in-game textures, hosted image links. ~24-48h", "inline": false },
+            { "name": "Custom briefs", "value": "Hidden items, faction heraldry, billboards, fleet wraps and more \u2014 quoted within 12 hours.", "inline": false }
+          ],
+          "footer": { "text": "Full details on the website: sauvagecreative.ls" }
+        }
+      ]
+    },
+    "faq": {
+      "pin": true,
+      "embeds": [
+        {
+          "title": "\u2753 Quick Answers",
+          "color": "#CCFF00",
+          "description": "",
+          "fields": [
+            { "name": "How do I pay?", "value": "Via the Fleeca Bank gateway using your character's routing number. 50% deposit, 50% on acceptance.", "inline": false },
+            { "name": "What files do I get?", "value": "Transparent PNGs, SVG vectors, optimised JPGs and BBCode for the GTA World forum.", "inline": false },
+            { "name": "How fast?", "value": "Logos/menus 24-48h; full brand kits 2-4 days. Rush (<24h) available.", "inline": false },
+            { "name": "What if I want changes?", "value": "Every package includes 2-3 revision rounds. Ask in your project room.", "inline": false }
+          ],
+          "footer": { "text": "More at sauvagecreative.ls/#faq" }
+        }
+      ]
+    },
+    "vouches": {
+      "pin": true,
+      "embeds": [
+        {
+          "title": "\u2b50 Leave a Vouch",
+          "color": "#CCFF00",
+          "description": "Worked with us? Drop your testimonial here.",
+          "fields": [
+            { "name": "How it works", "value": "1. Post your review with your order reference (e.g. REQ-XXXX).\n2. @Client Relations verifies it.\n3. It's approved and displayed on the site.", "inline": false }
+          ],
+          "footer": { "text": "Only verified completed orders are published." }
+        }
+      ]
     }
   }
 }
