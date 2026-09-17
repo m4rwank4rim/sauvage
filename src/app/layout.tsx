@@ -5,6 +5,7 @@ import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 import { siteConfig } from "../config/siteConfig";
 import { Toaster } from "react-hot-toast";
+import { CommandPalette } from "../components/CommandPalette";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -49,6 +50,7 @@ export default function RootLayout({
           <Navbar />
           <main className="flex-grow">{children}</main>
           <Footer />
+          <CommandPalette />
           <Toaster
             position="bottom-right"
             toastOptions={{
