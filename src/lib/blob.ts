@@ -41,10 +41,20 @@ export async function blobDelete(fileName: string): Promise<void> {
 export type BlobProbeResult = {
   configured: boolean;
   authorized?: boolean;
-  buckets?: { name: string; type: string }[];
+  storeIdHint?: string;
+  tokenMask?: string;
   writeOk?: boolean;
   writeRoundtripMs?: number;
   error?: string;
+};
+
+const maskToken = (t?: string) =>
+  t ? `${t.slice(0, 6)}...${t.slice(-4)}` : undefined;
+
+const storeIdHint = (t?: string) => {
+  // BLOB_READ_WRITE_TOKEN => vercel_blob_rw_<storeId>_<secret>
+  const parts = t?.split("_") ?? [];
+  return parts.length >= 4 ? parts.slice(1, parts.length - 1).join("_") : undefined;
 };
 
 const BUFFER_SAFE = (b: Buffer) => b.byteLength <= 4 * 1024 * 1024;
@@ -71,7 +81,12 @@ export async function blobProbe(writeTest = false): Promise<BlobProbeResult> {
     const { list } = await import("@vercel/blob");
     const { blobs } = await list({ prefix: "probe/", limit: 1 });
     return { configured: true, authorized: blobs !== undefined };
-  } catch (error) {
-    return { configured: true, error: error instanceof Error ? error.message : String(error) };
+} catch (error) {
+    return {
+      configured: true,
+      storeIdHint: storeIdHint(TOKEN),
+      tokenMask: maskToken(TOKEN),
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
