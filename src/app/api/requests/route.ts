@@ -4,6 +4,7 @@ import { DesignRequest } from "../../../lib/types";
 import { requireAdmin } from "../../../lib/admin";
 import { notifyDiscord } from "../../../lib/discord";
 import { fleecaClient } from "../../../lib/fleeca";
+import { enforceRateLimit } from "../../../lib/rate-limit";
 import { siteConfig } from "../../../config/siteConfig";
 
 type PublicService = { id: string; name: string; category: string; price: number };
@@ -24,6 +25,9 @@ const half = (n: number) => Math.round(n / 2);
 
 export async function POST(req: NextRequest) {
   try {
+    const limited = await enforceRateLimit(req, "requests", 6);
+    if (limited) return limited;
+
     const body = await req.json();
 
     const {
@@ -88,7 +92,7 @@ export async function POST(req: NextRequest) {
       const balance = totalAmount - deposit;
       const payment = await fleecaClient.createPayment({
         amount: deposit,
-        description: `50% Deposit — Request #${newRequest.id} (${newRequest.projectType})`,
+        description: `50% Deposit - Request #${newRequest.id} (${newRequest.projectType})`,
         requestId: newRequest.id,
       });
 
@@ -106,7 +110,7 @@ export async function POST(req: NextRequest) {
         requestId: newRequest.id,
         amount: deposit,
         mode: (process.env.FLEECA_MODE === "1" ? 1 : 0) as 0 | 1,
-        description: `50% Deposit — Request #${newRequest.id}`,
+        description: `50% Deposit - Request #${newRequest.id}`,
         status: "pending",
         createdAt: new Date().toISOString(),
       });

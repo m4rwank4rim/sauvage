@@ -4,11 +4,15 @@ import { authOptions } from "../../../lib/auth";
 import { dbStore } from "../../../lib/db/store";
 import { requireAdmin } from "../../../lib/admin";
 import { notifyDiscord } from "../../../lib/discord";
+import { enforceRateLimit } from "../../../lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    const limited = await enforceRateLimit(req, "messages", 30);
+    if (limited) return limited;
+
     const { requestId, content, attachmentUrl, attachmentName } = await req.json();
     if (!requestId) {
       return NextResponse.json({ success: false, error: "requestId is required." }, { status: 422 });

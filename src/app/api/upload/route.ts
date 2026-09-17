@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 import { blobUpload, blobConfigured } from "../../../lib/blob";
+import { enforceRateLimit } from "../../../lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -11,6 +12,10 @@ export async function POST(req: NextRequest) {
     if (!session?.user) {
       return NextResponse.json({ success: false, error: "Sign in to upload files." }, { status: 401 });
     }
+
+    const limited = await enforceRateLimit(req, "upload", 12);
+    if (limited) return limited;
+
     if (!blobConfigured()) {
       return NextResponse.json(
         { success: false, error: "File storage is not configured yet." },
@@ -27,7 +32,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "No file data provided." }, { status: 422 });
     }
 
+    const MAX_BYTES = 4 * 1024 * 1024;
+    if (base64.length > Math.ceil((MAX_BYTES * 4) / 3) + 4) {
+      return NextResponse.json({ success: false, error: "Max 4 MB per attachment." }, { status: 413 });
+    }
+
     const buffer = Buffer.from(base64, "base64");
+    if (buffer.length > MAX_BYTES) {
+      return NextResponse.json({ success: false, error: "Max 4 MB per attachment." }, { status: 413 });
+    }
     const result = await blobUpload(fileName, buffer, contentType);
     return NextResponse.json({ success: true, data: result }, { status: 201 });
   } catch (err) {

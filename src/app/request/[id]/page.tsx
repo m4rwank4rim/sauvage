@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
@@ -73,7 +74,14 @@ const StarPicker: React.FC<{ value: number; onChange: (n: number) => void }> = (
 const AttachmentView: React.FC<{ url: string; name: string }> = ({ url, name }) =>
   isImageName(name) ? (
     <a href={url} target="_blank" rel="noopener noreferrer">
-      <img src={url} alt={name} className="max-w-[260px] max-h-52 rounded-lg border border-white/10 my-1.5 block" />
+      <Image
+        src={url}
+        alt={name}
+        width={260}
+        height={208}
+        unoptimized
+        className="max-w-[260px] max-h-52 w-auto h-auto rounded-lg border border-white/10 my-1.5 block"
+      />
     </a>
   ) : (
     <a
@@ -136,8 +144,18 @@ export default function RequestDetailPage() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 4000);
-    return () => clearInterval(interval);
+    const tick = () => {
+      if (document.visibilityState === "visible") fetchData();
+    };
+    const interval = setInterval(tick, 4000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") fetchData();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -214,10 +232,12 @@ export default function RequestDetailPage() {
     try {
       const res = await fetch(`/api/requests/${id}/accept`, { method: "POST" });
       const json = await res.json();
-      if (!res.ok || !json?.data?.balancePaymentLink) {
+      if (!res.ok || !json?.data) {
         setAcceptError(json?.error || "Could not prepare acceptance.");
-      } else {
+      } else if (json.data.balancePaymentLink) {
         window.location.href = json.data.balancePaymentLink;
+      } else {
+        await fetchData();
       }
     } catch {
       setAcceptError("Network error. Try again.");
@@ -310,7 +330,7 @@ export default function RequestDetailPage() {
           <div className="absolute top-5 left-5 right-5 h-[2px] bg-[#1B1B20]" />
           <div
             className="absolute top-5 left-5 h-[2px] bg-gradient-to-r from-[#CCFF00]/60 to-[#CCFF00] transition-all duration-700"
-            style={{ width: `${(currentStageIndex / (STAGES.length - 1)) * 100}%` }}
+            style={{ width: `${(Math.max(0, currentStageIndex) / (STAGES.length - 1)) * 100}%` }}
           />
           <div className="relative flex justify-between">
             {STAGES.map((stage, idx) => {
@@ -431,7 +451,7 @@ export default function RequestDetailPage() {
       )}
 
       {/* Ready for review */}
-      {request.status === "ready_for_review" && (
+      {(request.status === "ready_for_review" || request.status === "delivered") && (
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -441,8 +461,9 @@ export default function RequestDetailPage() {
             🎁 Ready for Your Review
           </h2>
           <p className="text-sm text-[#F4F4F0] mb-4">
-            Final files are awaiting you. When you are happy, accept the order to release the remaining balance
-            and mark the project complete
+            {balanceDue > 0
+              ? "Final files are awaiting you. When you are happy, accept the order to release the remaining balance and mark the project complete"
+              : "Final files are awaiting you. When you are happy, accept the order to mark the project complete"}
           </p>
           {request.deliveryNotes && (
             <div className="bg-[#0B0B0D]/60 rounded-xl p-4 text-xs text-[#A8A8AF] mb-5 border border-white/5">
@@ -469,10 +490,15 @@ export default function RequestDetailPage() {
             >
               {accepting ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Preparing…</>
-              ) : (
+              ) : balanceDue > 0 ? (
                 <>
                   <CheckCircle2 className="w-4 h-4" />
                   Accept &amp; Pay Balance ${balanceDue.toLocaleString()}
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  Accept &amp; Complete
                 </>
               )}
             </button>
@@ -486,6 +512,24 @@ export default function RequestDetailPage() {
             </button>
           )}
           {acceptError && <p className="text-xs text-red-400">{acceptError}</p>}
+        </motion.div>
+      )}
+
+      {/* Cancelled */}
+      {request.status === "cancelled" && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl p-7 mb-6 bg-gradient-to-b from-[#2A1418] to-[#1A0C0F] border-2 border-red-400/40"
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <AlertCircle className="w-6 h-6 text-red-300" />
+            <h2 className="text-lg font-display font-bold text-[#F4F4F0]">Project cancelled</h2>
+          </div>
+          <p className="text-sm text-[#A8A8AF]">
+            This project has been cancelled. If you believe this is a mistake or would like to start a new brief,
+            reach out to us on Discord.
+          </p>
         </motion.div>
       )}
 

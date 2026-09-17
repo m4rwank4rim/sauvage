@@ -56,6 +56,15 @@ export async function PATCH(
     }
 
     const updated = await dbStore.updateRequest(params.id, updates);
+
+    if (updates.status === "cancelled" && existing.status !== "cancelled") {
+      await dbStore.appendMessage(params.id, {
+        authorRole: "system",
+        author: "SAUVAGE Design",
+        content: "This project has been cancelled. Reach out on Discord if you have any questions.",
+      });
+    }
+
     return NextResponse.json({ success: true, data: updated });
   } catch (err) {
     console.error("PATCH /api/requests/[id] error:", err);

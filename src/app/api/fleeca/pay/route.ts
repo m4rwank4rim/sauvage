@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Design request not found." }, { status: 404 });
     }
 
-    const desc = description || `Design Deposit — Request #${requestId} (${designRequest.projectType})`;
+    const desc = description || `Design Deposit - Request #${requestId} (${designRequest.projectType})`;
 
     // Call Fleeca API (server-side, key never exposed to client)
     const paymentResult = await fleecaClient.createPayment({

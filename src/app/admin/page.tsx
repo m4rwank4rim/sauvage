@@ -73,7 +73,7 @@ export default function AdminPage() {
     }
     loadData();
     // Auto-sync every 15 seconds to keep admin panel perfectly synced with webhooks and new requests
-    const interval = setInterval(() => {
+    const sync = () => {
       // Fetch silently without setting loading state to avoid UI flicker
       Promise.all([
         fetch("/api/requests"),
@@ -87,6 +87,9 @@ export default function AdminPage() {
         if (balJson.success) setBalance(balJson.data);
         if (payJson.success) setPayments(payJson.data);
       }).catch(() => {});
+    };
+    const interval = setInterval(() => {
+      if (document.visibilityState === "visible") sync();
     }, 15000);
     return () => clearInterval(interval);
   }, [isAdmin, status]);
@@ -110,7 +113,7 @@ export default function AdminPage() {
         body: JSON.stringify({
           requestId: quotingReq.id,
           amount,
-          description: `Design Deposit — Request #${quotingReq.id} (${quotingReq.projectType})`,
+          description: `Design Deposit - Request #${quotingReq.id} (${quotingReq.projectType})`,
         }),
       });
       const payJson = await payRes.json();
@@ -182,10 +185,11 @@ export default function AdminPage() {
   // Stats
   const total = requests.length;
   const pending = requests.filter((r) => r.status === "pending_quote").length;
-  const paid = requests.filter((r) => r.status === "paid" || r.status === "delivered").length;
+  const paidStatuses = ["paid", "in_progress", "ready_for_review", "delivered", "completed"];
+  const paid = requests.filter((r) => paidStatuses.includes(r.status)).length;
   const totalEarned = requests
-    .filter((r) => r.status === "paid" || r.status === "in_progress" || r.status === "delivered")
-    .reduce((sum, r) => sum + (r.quoteAmount || 0), 0);
+    .filter((r) => paidStatuses.includes(r.status))
+    .reduce((sum, r) => sum + (r.depositAmount ?? r.quoteAmount ?? 0), 0);
 
   if (status === "loading") {
     return (
@@ -376,6 +380,19 @@ export default function AdminPage() {
                       >
                         <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
+                      {req.status !== "cancelled" && req.status !== "completed" && (
+                        <button
+                          onClick={() => {
+                            if (confirm(`Cancel project ${req.id}? This cannot be undone.`)) {
+                              updateStatus(req.id, "cancelled");
+                            }
+                          }}
+                          className="text-[#6B6B72] hover:text-red-300 transition-colors"
+                          title="Cancel project"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

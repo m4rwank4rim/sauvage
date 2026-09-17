@@ -15,7 +15,7 @@ export async function POST(
     if (!request) {
       return NextResponse.json({ success: false, error: "Request not found." }, { status: 404 });
     }
-    if (request.status !== "ready_for_review") {
+    if (request.status !== "ready_for_review" && request.status !== "delivered") {
       return NextResponse.json(
         { success: false, error: "This project is not awaiting your acceptance yet." },
         { status: 409 }
@@ -36,18 +36,25 @@ export async function POST(
       );
     }
 
+    const balance =
+      request.balanceAmount ?? (request.totalAmount ? Math.round(request.totalAmount / 2) : 0);
+
+    if (balance < 1) {
+      const now = new Date().toISOString();
+      await dbStore.updateRequest(request.id, { status: "completed", acceptedAt: now });
+      await dbStore.appendMessage(request.id, {
+        authorRole: "system",
+        author: "SAUVAGE Design",
+        content: "Order accepted and marked complete. Thank you for commissioning SAUVAGE.",
+      });
+      return NextResponse.json({ success: true, data: { completed: true } });
+    }
+
     let link = request.balancePaymentLink;
     if (!link) {
-      const balance = request.balanceAmount ?? Math.round((request.totalAmount || 0) / 2);
-      if (balance < 1) {
-        return NextResponse.json(
-          { success: false, error: "No outstanding balance to pay." },
-          { status: 422 }
-        );
-      }
       const payment = await fleecaClient.createPayment({
         amount: balance,
-        description: `Balance — Request #${request.id} (${request.projectType})`,
+        description: `Balance - Request #${request.id} (${request.projectType})`,
         requestId: request.id,
       });
       if (!payment.success || !payment.payment_id) {
@@ -65,7 +72,7 @@ export async function POST(
         requestId: request.id,
         amount: balance,
         mode: (process.env.FLEECA_MODE === "1" ? 1 : 0) as 0 | 1,
-        description: `Balance — Request #${request.id}`,
+        description: `Balance - Request #${request.id}`,
         status: "pending",
         createdAt: new Date().toISOString(),
       });
