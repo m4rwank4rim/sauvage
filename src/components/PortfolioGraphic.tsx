@@ -24,7 +24,7 @@ export const PortfolioGraphic: React.FC<PortfolioGraphicProps> = ({
           fill
           unoptimized
           sizes={isHero ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, 33vw"}
-          className="object-cover"
+          className={isHero ? "object-contain" : "object-cover"}
         />
       </div>
     );
