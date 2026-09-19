@@ -41,6 +41,8 @@ export async function GET() {
   const env = kvEnv();
   const out: Record<string, unknown> = {
     storageDriver: "vercel-blob",
+    siteUrl: process.env.SITE_URL || null,
+    nextauthUrl: process.env.NEXTAUTH_URL || null,
     blob: await blobProbe(true),
     discord: await discordDiag(),
     envCandidates: {
