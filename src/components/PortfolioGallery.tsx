@@ -95,20 +95,21 @@ export const PortfolioGallery: React.FC<{ items: PortfolioItem[] }> = ({ items }
                   className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.045]"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0D]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0D]/90 via-[#0B0B0D]/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                <div className="absolute inset-x-0 bottom-0 p-5 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full border border-electric-lime/40 bg-electric-lime/[0.08] backdrop-blur-sm font-mono text-[9px] uppercase tracking-[0.18em] text-electric-lime">
-                      {item.category}
-                    </span>
-                    <span className="font-mono text-[10px] text-text-muted">{item.year}</span>
-                  </div>
-                  <h3 className="font-display font-medium text-xl text-text-primary leading-tight">
-                    {item.title}
-                  </h3>
-                  <p className="mt-1 text-xs text-text-muted">{item.clientName}</p>
-                  <div className="mt-3 flex items-center gap-4">
+                <div className="absolute inset-x-0 bottom-0 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <div className="bg-[#0B0B0D]/70 backdrop-blur-md border-t border-white/[0.1] px-5 py-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full border border-electric-lime/40 bg-electric-lime/[0.12] backdrop-blur-sm font-mono text-[9px] uppercase tracking-[0.18em] text-electric-lime">
+                        {item.category}
+                      </span>
+                      <span className="font-mono text-[10px] text-text-secondary">{item.year}</span>
+                    </div>
+                    <h3 className="font-display font-medium text-xl text-text-primary leading-tight drop-shadow-md">
+                      {item.title}
+                    </h3>
+                    <p className="mt-1 text-xs text-text-secondary">{item.clientName}</p>
+                    <div className="mt-3 flex items-center gap-4">
                     <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-electric-lime">
                       <Eye className="w-3.5 h-3.5" />
                       <span>Inspect spec</span>
@@ -121,6 +122,7 @@ export const PortfolioGallery: React.FC<{ items: PortfolioItem[] }> = ({ items }
                       <span>Case study</span>
                       <ArrowRight className="w-3 h-3" />
                     </Link>
+                  </div>
                   </div>
                 </div>
 
