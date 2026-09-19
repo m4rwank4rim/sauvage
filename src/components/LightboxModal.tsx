@@ -263,8 +263,8 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
             </div>
 
             {/* Right / Content Details */}
-            <div className={`${landscape === true ? "w-full" : "md:w-1/2"} min-h-0 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto`}>
-              <div>
+            <div className={`${landscape === true ? "w-full" : "md:w-1/2"} min-h-0 p-6 sm:p-8 flex flex-col`}>
+              <div className="min-h-0 flex-1 overflow-y-auto pr-1">
                 <div className="flex flex-wrap items-center gap-2 mb-4">
                   <span className="px-3 py-1 rounded-full bg-[#CCFF00]/10 border border-[#CCFF00]/30 text-[#CCFF00] text-xs font-mono font-bold uppercase tracking-wider">
                     {item.category}
@@ -311,7 +311,7 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
               </div>
 
               {/* Action Bar */}
-              <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center gap-3">
+              <div className="shrink-0 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center gap-3">
                 <Link
                   href={`/request?category=${encodeURIComponent(item.category)}&ref=${encodeURIComponent(
                     item.title
