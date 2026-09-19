@@ -15,7 +15,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      signIn("discord");
+      signIn("discord", { callbackUrl: "/dashboard" });
     } else if (status === "authenticated") {
       fetch("/api/requests/me")
         .then((r) => r.json())
