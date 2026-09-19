@@ -29,6 +29,7 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [landscape, setLandscape] = useState<boolean | null>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -153,7 +154,18 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
   useEffect(() => {
     setScale(1);
     setPosition({ x: 0, y: 0 });
-  }, [item?.id]);
+
+    // Measure design orientation so landscape works get the full modal width
+    setLandscape(null);
+    if (item?.imageUrl) {
+      const img = new window.Image();
+      img.onload = () => setLandscape(img.naturalWidth > img.naturalHeight);
+      img.onerror = () => setLandscape(false);
+      img.src = item.imageUrl;
+    } else {
+      setLandscape(false);
+    }
+  }, [item?.id, item?.imageUrl]);
 
   const transformStyle = {
     transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
@@ -180,7 +192,7 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 20 }}
             transition={{ type: "spring", duration: 0.5, bounce: 0.15 }}
-            className={`relative z-10 w-full max-w-4xl max-h-[90vh] bg-[#141417] border border-white/15 rounded-3xl md:rounded-4xl shadow-2xl overflow-hidden flex flex-col md:flex-row ${isFullscreen ? "fixed inset-0 max-w-full max-h-full rounded-none border-none" : ""}`}
+            className={`relative z-10 w-full max-w-4xl max-h-[90vh] bg-[#141417] border border-white/15 rounded-3xl md:rounded-4xl shadow-2xl overflow-hidden ${landscape === true ? "flex flex-col" : "flex flex-col md:flex-row"} ${isFullscreen ? "fixed inset-0 max-w-full max-h-full rounded-none border-none" : ""}`}
           >
             {/* Close Button */}
             <button
@@ -223,7 +235,11 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
             {/* Left / Top Visual Canvas */}
             <div
               ref={imageRef}
-              className="md:w-1/2 min-h-[260px] sm:min-h-[320px] md:min-h-[480px] bg-[#0B0B0D] border-b md:border-b-0 md:border-r border-white/[0.08] flex items-center justify-center relative overflow-hidden"
+              className={`${
+                landscape === true
+                  ? "w-full min-h-[40vh] md:min-h-[52vh] border-b border-white/[0.08]"
+                  : "md:w-1/2 min-h-[260px] sm:min-h-[320px] md:min-h-[480px] border-b md:border-b-0 md:border-r border-white/[0.08]"
+              } bg-[#0B0B0D] flex items-center justify-center relative overflow-hidden`}
               style={{ cursor: scale > 1 ? "grab" : "default" }}
               onWheel={handleWheel}
               onMouseDown={handleMouseDown}
@@ -247,7 +263,7 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
             </div>
 
             {/* Right / Content Details */}
-            <div className="md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
+            <div className={`${landscape === true ? "w-full" : "md:w-1/2"} min-h-0 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto`}>
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-4">
                   <span className="px-3 py-1 rounded-full bg-[#CCFF00]/10 border border-[#CCFF00]/30 text-[#CCFF00] text-xs font-mono font-bold uppercase tracking-wider">
