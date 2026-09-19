@@ -237,7 +237,7 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
               ref={imageRef}
               className={`${
                 landscape === true
-                  ? "w-full min-h-[40vh] md:min-h-[52vh] border-b border-white/[0.08]"
+                  ? "w-full h-[40vh] md:h-[52vh] border-b border-white/[0.08]"
                   : "md:w-1/2 min-h-[260px] sm:min-h-[320px] md:min-h-[480px] border-b md:border-b-0 md:border-r border-white/[0.08]"
               } bg-[#0B0B0D] flex items-center justify-center relative overflow-hidden`}
               style={{ cursor: scale > 1 ? "grab" : "default" }}
