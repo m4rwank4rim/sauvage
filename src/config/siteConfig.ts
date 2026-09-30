@@ -44,7 +44,7 @@ export const siteConfig: SiteConfig = {
     "Bespoke brand identities, cocktail menus, and faction visuals crafted specifically for Los Santos businesses. Instant deposits & payouts powered by Fleeca Bank.",
   serverInfo: {
     server: "Los Santos",
-    platform: "FiveM",
+    platform: "In-Game",
     operatingHours: "Monday - Sunday: 12:00 PM – 02:00 AM LS Time",
     inGameLocation: "Badger Tower Office Complex - Floor 2, Room 3",
     hotline: "19003308",

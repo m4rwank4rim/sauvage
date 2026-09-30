@@ -161,7 +161,7 @@ export const Footer: React.FC = () => {
           </div>
           <div className="flex-1">
             <span className="font-semibold text-text-primary font-mono tracking-wide block mb-1 text-[10px] uppercase">
-              Out of Character (OOC) Roleplay &amp; Banking Notice
+              Out of Character (OOC) &amp; Banking Notice
             </span>
             <p className="leading-relaxed text-[11px] text-text-secondary">
               {siteConfig.oocDisclaimer}

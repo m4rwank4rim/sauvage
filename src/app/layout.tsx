@@ -30,7 +30,6 @@ export const metadata: Metadata = {
     "Creative Agency",
     "Fleeca Bank",
     "Los Santos",
-    "Roleplay",
   ],
 };
 
