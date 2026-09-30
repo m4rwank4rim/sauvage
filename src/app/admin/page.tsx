@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck, RefreshCw, DollarSign, ClipboardList, CreditCard,
-  CheckCircle2, Clock, Package, Zap, X, ArrowRight, AlertTriangle, LogOut, Trash2, Upload, Copy
+  CheckCircle2, Clock, Package, Zap, X, ArrowRight, AlertTriangle, LogOut, Trash2, Upload, Copy, Tags
 } from "lucide-react";
 import { DesignRequest, PaymentRecord } from "../../lib/types";
 import { AdminPageSkeleton } from "../../components/Skeleton";
@@ -258,6 +258,13 @@ export default function AdminPage() {
       </h1>
     </div>
     <div className="flex items-center gap-3">
+      <Link
+        href="/admin/pricing"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#141417] border border-white/10 hover:border-[#CCFF00]/40 text-xs text-[#A8A8AF] hover:text-[#F4F4F0] transition-all"
+      >
+        <Tags className="w-4 h-4" />
+        <span>Pricing</span>
+      </Link>
       <Link
         href="/admin/portfolio"
         className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#141417] border border-white/10 hover:border-[#CCFF00]/40 text-xs text-[#A8A8AF] hover:text-[#F4F4F0] transition-all"

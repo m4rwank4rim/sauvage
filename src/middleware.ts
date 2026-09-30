@@ -11,6 +11,6 @@ export default withAuth({
 });
 
 export const config = {
-  // Protect the admin portal page. API routes are guarded server-side via requireAdmin().
-  matcher: ["/admin"],
+  // Protect every admin page. API routes are guarded server-side via requireAdmin().
+  matcher: ["/admin/:path*"],
 };

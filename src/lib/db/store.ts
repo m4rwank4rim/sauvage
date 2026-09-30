@@ -3,6 +3,7 @@ import path from "path";
 import { Redis } from "@upstash/redis";
 import { DesignRequest, PaymentRecord, RequestStatus, Review, ChatMessage, PortfolioItem } from "../types";
 import { PORTFOLIO_ITEMS } from "../../data/portfolio";
+import { ServiceTier, siteConfig } from "../../config/siteConfig";
 
 interface DatabaseSchema {
   requests: DesignRequest[];
@@ -10,6 +11,8 @@ interface DatabaseSchema {
   reviews: Review[];
   portfolio?: PortfolioItem[];
   portfolioInit?: boolean;
+  services?: ServiceTier[];
+  servicesInit?: boolean;
 }
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -21,6 +24,7 @@ const K_PAY_LIST = "agency:pays";
 const K_REV_LIST = "agency:reviews";
 const K_WORK_LIST = "agency:portfolio";
 const K_WORK_INIT = "agency:portfolio:init";
+const K_SERVICES = "agency:services";
 const K_INIT = "agency:init";
 
 const kvEnv = (): { url: string | undefined; token: string | undefined } => {
@@ -149,6 +153,8 @@ export class DatabaseStore {
         reviews: parsed.reviews || [],
         portfolio: parsed.portfolio || [],
         portfolioInit: parsed.portfolioInit ?? false,
+        services: parsed.services || [],
+        servicesInit: parsed.servicesInit ?? false,
       };
     } catch (err) {
       console.error("Failed to read store:", err);
@@ -564,6 +570,67 @@ export class DatabaseStore {
     data.portfolio = ids.map((id) => byId.get(id)).filter(Boolean) as PortfolioItem[];
     this.fsSave(data);
     return data.portfolio;
+  }
+
+  // --- Services (package pricing) ---
+  /**
+   * Package tiers are seeded once from siteConfig, then owned by the admin
+   * pricing editor. Ids are load-bearing (they key /request?service= and the
+   * deposit maths), so they are never regenerated — only fields are patched.
+   */
+  async getAllServices(): Promise<ServiceTier[]> {
+    if (kvBackendActive()) {
+      const stored = await this.kv().get<ServiceTier[]>(K_SERVICES);
+      if (stored && Array.isArray(stored) && stored.length > 0) return stored;
+      await this.kv().set(K_SERVICES, JSON.stringify(siteConfig.services));
+      return siteConfig.services;
+    }
+
+    const data = this.fsLoad();
+    if (!data.servicesInit || (data.services ?? []).length === 0) {
+      data.services = siteConfig.services.map((s) => ({ ...s }));
+      data.servicesInit = true;
+      this.fsSave(data);
+    }
+    return data.services as ServiceTier[];
+  }
+
+  async getServiceById(id: string): Promise<ServiceTier | null> {
+    const services = await this.getAllServices();
+    return services.find((s) => s.id === id) ?? null;
+  }
+
+  /** Shallow-merges `updates` into the matching tier, preserving id + order. */
+  async updateService(id: string, updates: Partial<ServiceTier>): Promise<ServiceTier | null> {
+    const services = await this.getAllServices();
+    const index = services.findIndex((s) => s.id === id);
+    if (index === -1) return null;
+    services[index] = { ...services[index], ...updates, id };
+
+    if (kvBackendActive()) {
+      await this.kv().set(K_SERVICES, JSON.stringify(services));
+    } else {
+      const data = this.fsLoad();
+      data.services = services;
+      data.servicesInit = true;
+      this.fsSave(data);
+    }
+    return services[index];
+  }
+
+  /** Restores every tier to the values committed in siteConfig. */
+  async resetServices(): Promise<ServiceTier[]> {
+    const services = siteConfig.services.map((s) => ({ ...s }));
+
+    if (kvBackendActive()) {
+      await this.kv().set(K_SERVICES, JSON.stringify(services));
+    } else {
+      const data = this.fsLoad();
+      data.services = services;
+      data.servicesInit = true;
+      this.fsSave(data);
+    }
+    return services;
   }
 
   // --- Reviews ---

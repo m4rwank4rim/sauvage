@@ -88,7 +88,7 @@ function RequestPageInner() {
     "Logo & Identity"
   ) as (typeof PROJECT_TYPES)[number];
 
-  const services = siteConfig.services as { id: string; name: string; category: string; price: number; tagline: string; deliveryTime: string; features: string[] }[];
+  const [services, setServices] = React.useState(siteConfig.services);
   const [selectedServiceId, setSelectedServiceId] = React.useState(() =>
     prefilledService && prefilledService !== "custom" ? prefilledService : ""
   );
@@ -129,6 +129,22 @@ function RequestPageInner() {
       });
     }
   }, [status, session, reset, defaultType]);
+
+  // Package prices are admin-editable, so pull the live tiers from the API.
+  useEffect(() => {
+    let active = true;
+    fetch("/api/services")
+      .then((res) => res.json())
+      .then((json) => {
+        if (active && json?.success && Array.isArray(json.data) && json.data.length) {
+          setServices(json.data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const briefValue = watch("brief") || "";
 

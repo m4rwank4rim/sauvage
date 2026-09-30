@@ -4,9 +4,11 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, Sparkles, Clock } from "lucide-react";
-import { siteConfig } from "../config/siteConfig";
+import { ServiceTier, siteConfig } from "../config/siteConfig";
 
-export const PricingSection: React.FC = () => {
+export const PricingSection: React.FC<{ services?: ServiceTier[] }> = ({ services }) => {
+  const tiers = services && services.length ? services : siteConfig.services;
+
   return (
     <section id="pricing" className="max-w-7xl mx-auto px-5 md:px-8 py-20 md:py-28 relative">
       {/* Background ambient glow */}
@@ -37,7 +39,7 @@ export const PricingSection: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-5 relative z-10 items-start">
-        {siteConfig.services.map((tier, index) => {
+        {tiers.map((tier, index) => {
           const isPopular = tier.popular;
           return (
             <motion.div

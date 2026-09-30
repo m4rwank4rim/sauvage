@@ -10,7 +10,10 @@ import { dbStore } from "../lib/db/store";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const items = await dbStore.getAllPortfolio();
+  const [items, services] = await Promise.all([
+    dbStore.getAllPortfolio(),
+    dbStore.getAllServices(),
+  ]);
 
   return (
     <div className="relative">
@@ -24,7 +27,7 @@ export default async function HomePage() {
       <FeaturedWork items={items} />
 
       {/* 4. Services & Pricing Tiers */}
-      <PricingSection />
+      <PricingSection services={services} />
 
       {/* 5. In-Character Testimonials Strip */}
       <TestimonialsStrip />

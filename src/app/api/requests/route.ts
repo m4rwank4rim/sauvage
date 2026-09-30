@@ -5,7 +5,6 @@ import { requireAdmin } from "../../../lib/admin";
 import { notifyDiscord } from "../../../lib/discord";
 import { fleecaClient } from "../../../lib/fleeca";
 import { enforceRateLimit } from "../../../lib/rate-limit";
-import { siteConfig } from "../../../config/siteConfig";
 
 type PublicService = { id: string; name: string; category: string; price: number };
 
@@ -52,7 +51,7 @@ export async function POST(req: NextRequest) {
     }
 
     const service = packageId
-      ? (siteConfig.services as PublicService[]).find((s) => s.id === packageId)
+      ? (await dbStore.getAllServices() as PublicService[]).find((s) => s.id === packageId)
       : null;
 
     const refs = Array.isArray(attachments)
