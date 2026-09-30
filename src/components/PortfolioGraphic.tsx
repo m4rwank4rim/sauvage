@@ -182,7 +182,7 @@ export const PortfolioGraphic: React.FC<PortfolioGraphicProps> = ({
           </div>
           <div className="relative z-10 flex justify-between text-[8px] text-[#6B6B72]">
             <span>SAUVAGE STUDIO</span>
-            <span className="text-[#CCFF00]">AUTHENTIC GTAW SPEC</span>
+            <span className="text-[#CCFF00]">AUTHENTIC SPEC</span>
           </div>
         </div>
       );

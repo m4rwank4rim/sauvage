@@ -1,7 +1,7 @@
 # SAUVAGE™ — GTA World Roleplay Design Agency Website
 
 A production-quality marketing + client-intake + Fleeca payment platform for an in-character
-graphic design agency operating on the **GTA World Roleplay (GTAW)** server.
+graphic design agency operating on the **GTA World Roleplay** server.
 
 Visually modeled after **superpower.com**: big confident headline, generous whitespace, large
 rounded cards, soft glows on a deep near-black background, scroll-triggered animations, sticky
@@ -204,7 +204,7 @@ src/
 
 ## OOC Disclaimer
 
-This website is built for an **in-character creative agency within the GTA World Roleplay (GTAW)
+This website is built for an **in-character creative agency within the GTA World Roleplay
 server**. All dollar amounts (`$`) represent in-game virtual currency processed via the Fleeca Bank
 in-game API. This project is not affiliated with Rockstar Games, Take-Two Interactive, or any
 real-world financial institution.

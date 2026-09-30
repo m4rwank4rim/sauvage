@@ -163,7 +163,7 @@ export const HeroSection: React.FC<{ items?: PortfolioItem[] }> = ({ items }) =>
                   </div>
                 </div>
                 <span className="text-text-muted font-mono text-[10px]">
-                  {featured.year} · GTAW
+                  {featured.year}
                 </span>
               </div>
             </div>

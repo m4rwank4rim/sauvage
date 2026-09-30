@@ -43,7 +43,7 @@ export const siteConfig: SiteConfig = {
   subheadline:
     "Bespoke brand identities, cocktail menus, and faction visuals crafted specifically for GTA World businesses. Instant deposits & payouts powered by Fleeca Bank.",
   serverInfo: {
-    server: "GTA World Roleplay (GTAW)",
+    server: "GTA World Roleplay",
     platform: "FiveM",
     operatingHours: "Monday - Sunday: 12:00 PM – 02:00 AM LS Time",
     inGameLocation: "Badger Tower Office Complex - Floor 2, Room 3",
@@ -106,7 +106,7 @@ export const siteConfig: SiteConfig = {
         "Custom letterhead & invoice template",
         "In-character business cards (Print-ready)",
         "Social media & Facebrowser banner package",
-        "Official GTAW forum thread layout code (BBCode / HTML)",
+        "Official forum thread layout code (BBCode / HTML)",
         "3 revision rounds included",
       ],
     },
@@ -164,5 +164,5 @@ export const siteConfig: SiteConfig = {
     },
   ],
   oocDisclaimer:
-    "OOC DISCLAIMER: SAUVAGE is an in-character graphic design studio operating solely within the GTA World Roleplay (GTAW) environment. All transactions and currency values ($) represent GTA World in-game virtual money processed via the Fleeca Bank API. This project is not affiliated with, sponsored by, or endorsed by Rockstar Games, Take-Two Interactive, or any real-world financial institution.",
+    "OOC DISCLAIMER: SAUVAGE is an in-character graphic design studio operating solely within the GTA World Roleplay environment. All transactions and currency values ($) represent in-game virtual money processed via the Fleeca Bank API. This project is not affiliated with, sponsored by, or endorsed by Rockstar Games, Take-Two Interactive, or any real-world financial institution.",
 };

@@ -281,7 +281,7 @@ function FleecaMockCheckoutPageInner() {
           {/* Footer */}
           <div className="px-6 pb-6 flex items-center justify-center gap-2 text-[10px] text-[#6B6B72] font-mono border-t border-white/5">
             <Shield className="w-3 h-3 text-[#CCFF00]" />
-            <span>Fleeca Bank Secure Gateway · GTAW Sandbox · HMAC-SHA256 Signed</span>
+            <span>Fleeca Bank Secure Gateway · Sandbox · HMAC-SHA256 Signed</span>
           </div>
         </motion.div>
 

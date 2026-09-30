@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   description: siteConfig.subheadline,
   keywords: [
     "GTA World",
-    "GTAW",
+    "GTA",
     "Graphic Design",
     "Creative Agency",
     "Fleeca Bank",

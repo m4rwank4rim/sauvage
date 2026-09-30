@@ -31,7 +31,7 @@ export const PricingSection: React.FC = () => {
           </h2>
           <p className="text-sm md:text-base text-text-secondary max-w-xl mx-auto mt-4 leading-relaxed">
             Paid securely via the Fleeca Bank Gateway. Every project includes revisions, vector
-            source deliverables, and official GTAW forum formatting.
+            source deliverables, and official forum formatting.
           </p>
         </motion.div>
       </div>

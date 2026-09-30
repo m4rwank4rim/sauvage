@@ -48,7 +48,7 @@ export interface DesignRequest {
   brief: string;
   attachments?: Attachment[];
   status: RequestStatus;
-  quoteAmount?: number; // In GTAW in-game dollars ($)
+  quoteAmount?: number; // In-game dollars ($)
   quoteNotes?: string;
   fleecaPaymentId?: string;
   fleecaPaymentLink?: string;

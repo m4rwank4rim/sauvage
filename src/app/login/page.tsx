@@ -18,7 +18,7 @@ export default function LoginPage() {
         </div>
         <h1 className="text-2xl font-display font-black text-[#F4F4F0] mb-2">Client Login</h1>
         <p className="text-sm text-[#A8A8AF] mb-8">
-          Welcome to {siteConfig.agencyName}. Sign in with your Discord account (linked to your GTAW UCP) to submit briefs and securely access deliverables.
+          Welcome to {siteConfig.agencyName}. Sign in with your Discord account to submit briefs and securely access deliverables.
         </p>
 
         <button
