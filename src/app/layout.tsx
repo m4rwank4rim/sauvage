@@ -26,8 +26,6 @@ export const metadata: Metadata = {
   title: `${siteConfig.agencyName} — Premier Los Santos Brand & Creative Agency`,
   description: siteConfig.subheadline,
   keywords: [
-    "GTA World",
-    "GTA",
     "Graphic Design",
     "Creative Agency",
     "Fleeca Bank",

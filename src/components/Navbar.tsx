@@ -278,7 +278,7 @@ export const Navbar: React.FC = () => {
               {/* Footer */}
               <div className="px-4 pb-6 text-center">
                 <p className="text-center text-[10px] text-text-muted font-mono mb-3">
-                  Official Fleeca Gateway · GTA World Roleplay
+                  Official Fleeca Gateway · In-Character Business
                 </p>
                 {session && (
                   <button

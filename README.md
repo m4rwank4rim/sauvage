@@ -1,7 +1,7 @@
-# SAUVAGE™ — GTA World Roleplay Design Agency Website
+# SAUVAGE™ — In-Character Design Agency Website
 
 A production-quality marketing + client-intake + Fleeca payment platform for an in-character
-graphic design agency operating on the **GTA World Roleplay** server.
+graphic design agency.
 
 Visually modeled after **superpower.com**: big confident headline, generous whitespace, large
 rounded cards, soft glows on a deep near-black background, scroll-triggered animations, sticky
@@ -106,7 +106,7 @@ npm start
 
 ### Getting a real Fleeca API key
 
-1. Log in to the [Fleeca Merchant Center](https://banking.gta.world/merchant) with your GTA World character.
+1. Log in to the [Fleeca Merchant Center](https://banking.gta.world/merchant) with your character.
 2. Register your merchant business and generate a Bearer API key.
 3. Set your redirect URL: `https://yourdomain.com/payment/result`
 4. Set your callback/webhook URL: `https://yourdomain.com/api/webhooks/fleeca`
@@ -204,7 +204,7 @@ src/
 
 ## OOC Disclaimer
 
-This website is built for an **in-character creative agency within the GTA World Roleplay
-server**. All dollar amounts (`$`) represent in-game virtual currency processed via the Fleeca Bank
+This website is built for an **in-character creative agency**. All dollar amounts (`$`) represent
+in-game virtual currency processed via the Fleeca Bank
 in-game API. This project is not affiliated with Rockstar Games, Take-Two Interactive, or any
 real-world financial institution.

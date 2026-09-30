@@ -2,7 +2,7 @@ export interface ServiceTier {
   id: string;
   name: string;
   category: string;
-  price: number; // In-game GTA World dollars ($)
+  price: number; // In-game dollars ($)
   popular?: boolean;
   tagline: string;
   deliveryTime: string;
@@ -41,9 +41,9 @@ export const siteConfig: SiteConfig = {
   tagline: "Premier Brand & Visual Identity Agency of Los Santos",
   headline: "Graphic design that commands respect in Los Santos.",
   subheadline:
-    "Bespoke brand identities, cocktail menus, and faction visuals crafted specifically for GTA World businesses. Instant deposits & payouts powered by Fleeca Bank.",
+    "Bespoke brand identities, cocktail menus, and faction visuals crafted specifically for Los Santos businesses. Instant deposits & payouts powered by Fleeca Bank.",
   serverInfo: {
-    server: "GTA World Roleplay",
+    server: "Los Santos",
     platform: "FiveM",
     operatingHours: "Monday - Sunday: 12:00 PM – 02:00 AM LS Time",
     inGameLocation: "Badger Tower Office Complex - Floor 2, Room 3",
@@ -130,7 +130,7 @@ export const siteConfig: SiteConfig = {
     {
       question: "How does payment work with Fleeca Bank?",
       answer:
-        "For in-stock packages, you pay a 50% deposit instantly at checkout through the Fleeca Bank Gateway (GTA World's in-character banking system) using your character's routing number. Our system confirms it via encrypted webhook and opens your project room. The remaining 50% is only charged when you accept the finished work. Custom briefs receive a quote first, then require a deposit to start.",
+        "For in-stock packages, you pay a 50% deposit instantly at checkout through the Fleeca Bank Gateway using your character's routing number. Our system confirms it via encrypted webhook and opens your project room. The remaining 50% is only charged when you accept the finished work. Custom briefs receive a quote first, then require a deposit to start.",
     },
     {
       question: "Is this a real deposit — am I locked in?",
@@ -138,9 +138,9 @@ export const siteConfig: SiteConfig = {
         "The 50% deposit simply reserves your slot and confirms the artwork direction; it goes against your final total. You review the actual results in your project room before paying the other half — you only pay the balance when you accept the order.",
     },
     {
-      question: "Are these real US Dollars or GTA World in-game currency?",
+      question: "Are these real US Dollars or in-game currency?",
       answer:
-        "All prices listed on this site ($) are strictly GTA World in-character currency. We operate strictly as an in-character service business within the GTA World roleplay server. No real-world currency is ever requested, charged, or accepted.",
+        "All prices listed on this site ($) are strictly in-character currency. We operate strictly as an in-character service business. No real-world currency is ever requested, charged, or accepted.",
     },
     {
       question: "What is your typical turnaround time?",
@@ -155,7 +155,7 @@ export const siteConfig: SiteConfig = {
     {
       question: "What file formats will I receive?",
       answer:
-        "You will receive high-resolution PNGs with transparent backgrounds, lossless SVGs/vector graphics for scale, optimized JPGs for web/Facebrowser, and BBCode formatted snippets for the GTA World forums.",
+        "You will receive high-resolution PNGs with transparent backgrounds, lossless SVGs/vector graphics for scale, optimized JPGs for web/Facebrowser, and BBCode formatted snippets for the forums.",
     },
     {
       question: "Can I order custom assets not listed in the pricing tiers?",
@@ -164,5 +164,5 @@ export const siteConfig: SiteConfig = {
     },
   ],
   oocDisclaimer:
-    "OOC DISCLAIMER: SAUVAGE is an in-character graphic design studio operating solely within the GTA World Roleplay environment. All transactions and currency values ($) represent in-game virtual money processed via the Fleeca Bank API. This project is not affiliated with, sponsored by, or endorsed by Rockstar Games, Take-Two Interactive, or any real-world financial institution.",
+    "OOC DISCLAIMER: SAUVAGE is an in-character graphic design studio. All transactions and currency values ($) represent in-game virtual money processed via the Fleeca Bank API. This project is not affiliated with, sponsored by, or endorsed by Rockstar Games, Take-Two Interactive, or any real-world financial institution.",
 };

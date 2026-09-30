@@ -450,7 +450,7 @@ function RequestPageInner() {
                   )}
 
                   <p className="text-[10px] text-[#6B6B72] font-mono">
-                    No real-world payments — all prices are GTA World in-character currency ($).
+                    No real-world payments — all prices are in-character currency ($).
                   </p>
                 </div>
               </div>
@@ -640,7 +640,7 @@ function RequestPageInner() {
             </div>
 
             <p className="text-center text-[11px] text-[#6B6B72] font-mono">
-              By submitting, you agree that all quoted pricing is in GTA World in-character currency
+              By submitting, you agree that all quoted pricing is in-character currency
               ($). No real-world payments.
             </p>
           </motion.form>

@@ -247,7 +247,7 @@ function PaymentResultPageInner() {
           )}
 
           <p className="text-[11px] text-[#6B6B72] font-mono">
-            All payments processed via Fleeca Bank Gateway API · GTA World Roleplay · In-game
+            All payments processed via Fleeca Bank Gateway API · In-game currency
             currency only
           </p>
         </motion.div>

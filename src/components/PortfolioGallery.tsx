@@ -52,7 +52,7 @@ export const PortfolioGallery: React.FC<{ items: PortfolioItem[] }> = ({ items }
           </h1>
           <p className="text-sm sm:text-base text-text-secondary max-w-xl mt-4 leading-relaxed">
             Explore our collection of commercial branding, high-octane racing wraps, bar menus, and
-            faction visual packages delivered for GTA World roleplay.
+            faction visual packages delivered across Los Santos.
           </p>
         </div>
       </div>

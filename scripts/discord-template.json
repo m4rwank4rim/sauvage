@@ -90,7 +90,7 @@
         {
           "title": "Welcome to SAUVAGE\u2122",
           "color": "#CCFF00",
-          "description": "Los Santos' premier brand & visual identity studio. Logos, menus, signage, social kits and full business identities for GTA World enterprises, paid in in-game dollars via Fleeca.\n\n**Start here:**\n1. Read #rules\n2. Say hi in #introductions\n3. Order in #how-to-order",
+          "description": "Los Santos' premier brand & visual identity studio. Logos, menus, signage, social kits and full business identities for Los Santos enterprises, paid in in-game dollars via Fleeca.\n\n**Start here:**\n1. Read #rules\n2. Say hi in #introductions\n3. Order in #how-to-order",
           "fields": [
             { "name": "\ud83d\udee0\ufe0f Need a design?", "value": "Browse #pricing or tell us your brief in #open-a-ticket.", "inline": false },
             { "name": "\ud83d\udcac Talk to the team", "value": "Ping @Client Relations to open a new order or ask a question.", "inline": false },
@@ -111,7 +111,7 @@
             { "name": "1 \u2014 Stay in character", "value": "All business and community channels are in-character and set in Los Santos.", "inline": false },
             { "name": "2 \u2014 No spam or scams", "value": "No advertisements, referral spam, or competing service promotion.", "inline": false },
             { "name": "3 \u2014 Respect people", "value": "Harassment, hate speech, or drama gets you removed fast.", "inline": false },
-            { "name": "4 \u2014 In-game currency only", "value": "All work is paid in GTA World dollars via Fleeca. We never ask for real money.", "inline": false },
+            { "name": "4 \u2014 In-game currency only", "value": "All work is paid in in-game dollars via Fleeca. We never ask for real money.", "inline": false },
             { "name": "5 \u2014 Vouches need proof", "value": "Testimonials require a verified completed order reference.", "inline": false },
             { "name": "6 \u2014 Follow staff", "value": "Staff instructions in tickets and channels are final.", "inline": false }
           ],
@@ -160,7 +160,7 @@
         {
           "title": "\ud83d\udcb0 Current Packages",
           "color": "#CCFF00",
-          "description": "All prices are **GTA World in-game dollars** ($), paid in two instalments via Fleeca \u2014 50% to start, 50% on acceptance.",
+          "description": "All prices are **in-game dollars** ($), paid in two instalments via Fleeca \u2014 50% to start, 50% on acceptance.",
           "fields": [
             { "name": "Logo & Visual Emblem \u2014 $15,000", "value": "Primary logo + transparent PNGs, monochrome badges, SVG master, 2 revisions. ~24-48h", "inline": false },
             { "name": "Complete Brand Kit \u2014 $35,000", "value": "Logo suite, letterhead & invoice, business cards, Facebrowser banners, forum thread code, 3 revisions. ~2-4 days", "inline": false },
@@ -180,7 +180,7 @@
           "description": "",
           "fields": [
             { "name": "How do I pay?", "value": "Via the Fleeca Bank gateway using your character's routing number. 50% deposit, 50% on acceptance.", "inline": false },
-            { "name": "What files do I get?", "value": "Transparent PNGs, SVG vectors, optimised JPGs and BBCode for the GTA World forum.", "inline": false },
+            { "name": "What files do I get?", "value": "Transparent PNGs, SVG vectors, optimised JPGs and BBCode for the forum.", "inline": false },
             { "name": "How fast?", "value": "Logos/menus 24-48h; full brand kits 2-4 days. Rush (<24h) available.", "inline": false },
             { "name": "What if I want changes?", "value": "Every package includes 2-3 revision rounds. Ask in your project room.", "inline": false }
           ],

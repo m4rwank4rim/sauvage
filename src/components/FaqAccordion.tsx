@@ -34,7 +34,7 @@ export const FaqAccordion: React.FC = () => {
             Frequently asked questions.
           </h2>
           <p className="mt-4 text-sm md:text-base text-text-secondary max-w-xl leading-relaxed">
-            Everything you need to know about our commission process, GTA World currency
+            Everything you need to know about our commission process, in-game currency
             guidelines, and Fleeca Bank API payments.
           </p>
         </motion.div>

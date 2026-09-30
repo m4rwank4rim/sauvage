@@ -48,8 +48,7 @@ export const Footer: React.FC = () => {
               </span>
             </div>
             <p className="text-sm text-text-secondary max-w-sm leading-relaxed">
-              {siteConfig.tagline}. Operating across Los Santos and Blaine County on the GTA World
-              Roleplay server.
+              {siteConfig.tagline}. Operating across Los Santos and Blaine County.
             </p>
             <div className="flex items-center gap-2.5 text-[11px] font-mono text-electric-lime">
               <span className="w-1.5 h-1.5 rounded-full bg-electric-lime animate-pulse" />
@@ -113,7 +112,7 @@ export const Footer: React.FC = () => {
                 <Phone className="w-3.5 h-3.5" />
                 Hotline: {siteConfig.serverInfo.hotline}
               </p>
-              <p className="text-text-muted">FiveM GTA World</p>
+              <p className="text-text-muted">Los Santos</p>
             </div>
           </div>
 
@@ -172,7 +171,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom bar */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 border-t border-white/[0.06] text-xs text-text-muted">
-          <p>© {new Date().getFullYear()} SAUVAGE™. Built for GTA World RP.</p>
+          <p>© {new Date().getFullYear()} SAUVAGE™. Est. in Los Santos.</p>
           <div className="flex items-center gap-6">
             <span className="font-mono text-[11px]">Powered by Fleeca Gateway v2</span>
             <span>Los Santos, San Andreas</span>

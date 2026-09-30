@@ -58,7 +58,7 @@ export const HeroSection: React.FC<{ items?: PortfolioItem[] }> = ({ items }) =>
               <span className="relative inline-flex rounded-full w-2 h-2 bg-electric-lime" />
             </span>
             <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-secondary">
-              Fleeca Verified · GTA World Roleplay
+              Fleeca Verified · In-Character Business
             </span>
           </motion.div>
 
